@@ -1,6 +1,7 @@
 from docx import Document
 import re
 from classifier import classify_ask_type
+from classifier import classify_spell_text
 
 def extract_teach_ask_spell_sequences(uploaded_file):
 
@@ -24,13 +25,15 @@ def extract_teach_ask_spell_sequences(uploaded_file):
                     "teach": "",
                     "ask": "",
                     "spell": "",
-                    "ask type": ""
+                    "ask type": "",
+                    "spell type": ""
                 }
                 current_field = None
             elif(text.startswith("Teach:") and current_sequence is not None):
                 phrase = current_sequence["teach"] = text.split(":", 1)[1].strip()
 
             elif(text.startswith("Ask:") and current_sequence is not None):
+
                 phrase = current_sequence["ask"] = text.split(":", 1)[1].strip()
                 norm = phrase.strip().lstrip('"').lstrip("'").rstrip('"').rstrip("'")
                 ask_type = classify_ask_type(norm)
@@ -38,8 +41,13 @@ def extract_teach_ask_spell_sequences(uploaded_file):
             
             elif(text.startswith("Spell:") and current_sequence is not None):
                 phrase = current_sequence["spell"] = text.split(":", 1)[1].strip()
+                norm = phrase.strip().lstrip('"').lstrip("'").rstrip('"').rstrip("'")
+                spell_type = classify_spell_text(norm)
+                current_sequence["spell type"] = spell_type
 
     if(current_sequence is not None):
         sequence_list.append(current_sequence)
 
     return sequence_list
+
+
