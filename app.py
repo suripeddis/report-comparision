@@ -1,8 +1,8 @@
 import streamlit as st
-from extractor import extract_teach_ask_spell_sequences
-from ingest_transcript import read_transcript
-from ingest_transcript import is_prompt
-from ingest_transcript import open_ai_send
+from pipelines.steps.extractor import extract_teach_ask_spell_sequences
+from pipelines.steps.ingest_transcript import read_transcript
+from pipelines.steps.ingest_transcript import is_prompt
+from pipelines.steps.ingest_transcript import open_ai_send
 
 st.title("Teach Ask Spell Analysis")
 
