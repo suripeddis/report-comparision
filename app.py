@@ -1,152 +1,96 @@
+import json
+import pandas as pd
 import streamlit as st
-from pipelines.steps.extractor import extract_teach_ask_spell_sequences
+import streamlit.components.v1 as components
 from pipelines.steps.ingest_transcript import read_transcript
-from pipelines.steps.ingest_transcript import is_prompt
-from pipelines.steps.ingest_transcript import open_ai_send
+from pipelines.steps.classifier import classify_transcript
 
-st.title("Teach Ask Spell Analysis")
+st.set_page_config(page_title="AAC Prompt Classifier", layout="wide")
+st.title("AAC Prompt Classifier")
 
-report_tab, transcript_tab = st.tabs(["Report Analysis", "Prompt Analysis"])
+file = st.file_uploader(label="Upload transcript", type="srt")
+button = st.button(label="Analyze")
 
-with report_tab:
-    uploaded_file = st.file_uploader(
-        "Upload a .docx report",
-        type=["docx"],
-        accept_multiple_files=False
-    )
-    button = st.button("Process")
+if button and file:
+    with st.spinner("Reading transcript..."):
+        transcript_text = read_transcript(file)
 
-    label_types = {
-        "Open-ended": 0,
-        "Recall": 0,
-        "Sentence generation": 0,
-        "Yes/No": 0,
-        "Binary choice": 0,
-        "Multiple choice": 0,
-        "Invite speller questions": 0,
-        "Other/Unclear": 0
+    with st.spinner("Classifying prompts..."):
+        results = classify_transcript(transcript_text)
+
+    df = pd.DataFrame(results)
+    counts = df["type"].value_counts().to_dict()
+
+
+    color_map = {
+        "open_ended":           {"fill": "#AFA9EC", "text": "#26215C", "badge_bg": "#EEEDFE", "badge_text": "#3C3489", "label": "Open-ended"},
+        "choice":               {"fill": "#ED93B1", "text": "#4B1528", "badge_bg": "#FBEAF0", "badge_text": "#72243E", "label": "Choice"},
+        "clarification":        {"fill": "#FAC775", "text": "#412402", "badge_bg": "#FAEEDA", "badge_text": "#633806", "label": "Clarification"},
+        "guided":               {"fill": "#5DCAA5", "text": "#04342C", "badge_bg": "#E1F5EE", "badge_text": "#085041", "label": "Guided"},
+        "reinforcement":        {"fill": "#F0997B", "text": "#4A1B0C", "badge_bg": "#FAECE7", "badge_text": "#712B13", "label": "Reinforcement"},
     }
 
-    spell_types = {
-        "Single word": 0,
-        "Full sentence": 0,
-        "Reasoning/explanation": 0,
-        "Opinion/preference": 0,
-        "Question": 0,
-        "Boundary/self-advocacy": 0,
-        "Creative association (optional)": 0,
-        "Other/Unclear": 0
-    }
+    max_count = max(counts.values()) if counts else 1
 
-    if button:
-        if uploaded_file is None:
-            st.error("Upload a .docx file first")
-        else:
-            sequences = extract_teach_ask_spell_sequences(uploaded_file)
-            st.success(f"Extracted {len(sequences)} sequences")
-            overview_tab, details_tab = st.tabs(["Overview", "Details"])
+    bar_rows = ""
+    for ptype, count in sorted(counts.items(), key=lambda x: -x[1]):
+        c = color_map.get(ptype, {"fill": "#ccc", "text": "#333", "label": ptype})
+        pct = (count / max_count) * 100
+        bar_rows += f"""
+        <div class="bar-row">
+            <div class="bar-label">{c['label']}</div>
+            <div class="bar-track">
+                <div class="bar-fill" style="width:{pct}%; background:{c['fill']}; color:{c['text']}">
+                    {count}
+                </div>
+            </div>
+        </div>
+        """
 
-            with overview_tab:
-                st.header("Overview")
-                for s in sequences:
-                    if s["ask type"] in label_types:
-                        label_types[s["ask type"]] += 1
-                    if s["spell type"] in spell_types:
-                        spell_types[s["spell type"]] += 1
+    table_rows = ""
+    for _, row in df.iterrows():
+        ptype = row["type"]
+        c = color_map.get(ptype, {"badge_bg": "#eee", "badge_text": "#333", "label": ptype})
+        table_rows += f"""
+        <tr>
+            <td>{row['prompt_text']}</td>
+            <td><span class="badge" style="background:{c['badge_bg']}; color:{c['badge_text']}">{c['label']}</span></td>
+        </tr>
+        """
 
-                col1, col2, col3, col4 = st.columns(4, gap="large")
-                col1.metric("Total Sequences", len(sequences))
+    html = f"""
+    <style>
+        body {{ font-family: sans-serif; padding: 1rem; color: #1a1a1a; }}
+        .stats {{ display: flex; gap: 12px; margin-bottom: 1.5rem; }}
+        .stat {{ background: #f5f5f3; border-radius: 8px; padding: 12px 20px; flex: 1; text-align: center; }}
+        .stat-num {{ font-size: 28px; font-weight: 500; }}
+        .stat-lbl {{ font-size: 11px; color: #777; margin-top: 2px; }}
+        .section-title {{ font-size: 15px; font-weight: 500; margin-bottom: 1rem; }}
+        .bar-row {{ display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }}
+        .bar-label {{ width: 130px; font-size: 13px; color: #555; text-align: right; flex-shrink: 0; }}
+        .bar-track {{ flex: 1; height: 30px; background: #f0f0ee; border-radius: 4px; overflow: hidden; }}
+        .bar-fill {{ height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 10px; font-size: 13px; font-weight: 500; transition: width 0.6s ease; }}
+        table {{ width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 1rem; }}
+        th {{ text-align: left; padding: 8px 12px; font-size: 12px; color: #777; border-bottom: 1px solid #e5e5e3; }}
+        td {{ padding: 10px 12px; border-bottom: 1px solid #f0f0ee; vertical-align: top; }}
+        tr:last-child td {{ border-bottom: none; }}
+        .badge {{ display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; white-space: nowrap; }}
+    </style>
 
-                if len(sequences) > 0:
-                    col2.metric("Top Ask %", f"{(max(label_types.values()) / len(sequences)) * 100:.2f}%")
-                    col3.metric("Top Spell %", f"{(max(spell_types.values()) / len(sequences)) * 100:.2f}%")
-                else:
-                    col2.metric("Top Ask %", "0.00%")
-                    col3.metric("Top Spell %", "0.00%")
+    <div class="stats">
+        <div class="stat"><div class="stat-num">{len(df)}</div><div class="stat-lbl">total prompts</div></div>
+        <div class="stat"><div class="stat-num">{df['type'].nunique()}</div><div class="stat-lbl">categories</div></div>
 
-                col4.metric("Unclear Asks", label_types["Other/Unclear"])
+    </div>
 
-                st.title("Ask Type Distribution")
-                st.bar_chart(label_types)
-                st.title("Spell Type Distribution")
-                st.bar_chart(spell_types)
+    <div class="section-title">Prompt distribution</div>
+    {bar_rows}
 
-            with details_tab:
-                st.header("Details")
-                st.dataframe(sequences)
+    <div class="section-title" style="margin-top:2rem">Classified prompts</div>
+    <table>
+        <thead><tr><th>Prompt text</th><th>Type</th></tr></thead>
+        <tbody>{table_rows}</tbody>
+    </table>
+    """
 
-with transcript_tab:
-    file_uploaded = st.file_uploader(
-        "Upload a .txt or .srt transcript",
-        type=["txt", "srt"],
-        accept_multiple_files=False
-    )
-
-    button2 = st.button("Analyze")
-
- 
-    s2c_count = 0
-    rpm_count = 0
-    unclear_method_count = 0
-
-    
-    prompt_type_counts = {
-        "Guided": 0,
-        "Open-ended": 0,
-        "Clarification": 0,
-        "Reinforcement": 0,
-        "Choice-based": 0,
-        "Other/Unclear": 0
-    }
-
-    prompt_candidates = 0
-    classified_count = 0
-    none_returned = 0
-
-    if button2:
-        if file_uploaded is None:
-            st.error("Upload a .txt or .srt file first")
-        else:
-            cleaned_file = read_transcript(file_uploaded)
-
-            for line in cleaned_file:
-                if not is_prompt(line):
-                    continue
-
-                prompt_candidates += 1
-
-                result = open_ai_send(line)
-                if result is None:
-                    none_returned += 1
-                    continue
-
-                classified_count += 1
-
-                method = "Unclear"
-                prompt_type = "Other/Unclear"
-
-                parts = [p.strip() for p in result.split("|", 1)]
-                if len(parts) == 2:
-                    method, prompt_type = parts[0], parts[1]
-
-                
-                if method == "S2C":
-                    s2c_count += 1
-                elif method == "RPM":
-                    rpm_count += 1
-                else:
-                    unclear_method_count += 1
-
-                if prompt_type in prompt_type_counts:
-                    prompt_type_counts[prompt_type] += 1
-                else:
-                    prompt_type_counts["Other/Unclear"] += 1
-
-         
-            col1, col2, col3 = st.columns(3, gap="large")
-            col1.metric("Total S2C", s2c_count)
-            col2.metric("Total RPM", rpm_count)
-            col3.metric("Method Unclear", unclear_method_count)
-
-            st.title("Prompt Type Distribution")
-            st.bar_chart(prompt_type_counts)
+    components.html(html, height=200 + len(df) * 52 + len(counts) * 44, scrolling=True)

@@ -1,0 +1,3 @@
+Prompt,True Label,Predicted Label
+It’s okay to pause. You’re safe here.,Reinforcement Prompt,Guided Prompt
+What’s the strongest word you could use here?,Open-Ended Prompt,Guided Prompt

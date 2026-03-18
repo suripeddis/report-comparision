@@ -1,0 +1,339 @@
+text,label
+"Do you want to start with school or family?",PROMPT
+"Do you want to start with the title or the first paragraph?",PROMPT
+"Do you want to start with a question or a statement?",PROMPT
+"Which one do you want: school, family, or hobbies?",PROMPT
+"Which one do you want: the title, the first paragraph, or the ending?",PROMPT
+"Which one do you want: a question, a statement, or a prediction?",PROMPT
+"Do you want to answer with a word or a full sentence?",PROMPT
+"Should we keep going or take a short break?",PROMPT
+"Do you want to spell it first or talk about it first?",PROMPT
+"Do you want to try that again or move on?",PROMPT
+"Pick one: school or family.",PROMPT
+"Pick one: the title or the first paragraph.",PROMPT
+"Pick one: a question or a statement.",PROMPT
+"Do you want me to repeat the question or show you the keyword?",PROMPT
+"Do you want to work on school now or family now?",PROMPT
+"Do you want to work on the title now or the first paragraph now?",PROMPT
+"Do you want to work on a question now or a statement now?",PROMPT
+"Which feels easier right now: school or family?",PROMPT
+"Which feels easier right now: the title or the first paragraph?",PROMPT
+"Which feels easier right now: a question or a statement?",PROMPT
+"What are you noticing?",PROMPT
+"What do you see first?",PROMPT
+"What is the main idea in one sentence?",PROMPT
+"Why do you think that matters?",PROMPT
+"What might someone disagree with here?",PROMPT
+"What do you think will happen next?",PROMPT
+"How would you explain this to a friend?",PROMPT
+"What is one detail you want to add?",PROMPT
+"What question would you ask about this?",PROMPT
+"How does this connect to your life?",PROMPT
+"What is the strongest word you could use here?",PROMPT
+"What emotion do you think is showing up here?",PROMPT
+"When you say it, what exactly are you referring to?",PROMPT
+"Do you mean the character or the setting?",PROMPT
+"Which part are you talking about, the beginning or the end?",PROMPT
+"Can you show me where you got stuck?",PROMPT
+"What does that word mean to you here?",PROMPT
+"Are you saying you agree, disagree, or you are not sure yet?",PROMPT
+"Can you point to the exact line you mean?",PROMPT
+"Which sentence are you answering?",PROMPT
+"Are you referring to what you read or what you inferred?",PROMPT
+"What is the this in your sentence?",PROMPT
+"You are doing great. Keep going.",PROMPT
+"Nice work staying focused.",PROMPT
+"That was a solid effort. Let us do one more.",PROMPT
+"It is okay to pause. You are safe here.",PROMPT
+"Nobody is judging you.",PROMPT
+"Take a deep breath.",PROMPT
+"Let us take two breaths, then continue.",PROMPT
+"Good job correcting yourself.",PROMPT
+"You can do hard things, one step at a time.",PROMPT
+"Slow is fine. Accuracy matters more than speed.",PROMPT
+"Look right here. What do you see?",PROMPT
+"Point to the keyword in the text.",PROMPT
+"Start with the first letter of the word.",PROMPT
+"Let us slow down, one letter at a time.",PROMPT
+"Try the word again, but check the ending.",PROMPT
+"Check your work. Does that spelling match the sound?",PROMPT
+"Use the word in a new sentence.",PROMPT
+"Choose a starter phrase: I think or I notice.",PROMPT
+"Let us do three quick practice words.",PROMPT
+"Remember, we are spelling first, then we will talk about meaning.",PROMPT
+"Let us spell the word snow.",PROMPT
+"Let us spell the word winter.",PROMPT
+"Let us spell the word forest.",PROMPT
+"Let us spell the word major.",PROMPT
+"Let us spell the word light.",PROMPT
+"Spell snow.",PROMPT
+"Spell winter.",PROMPT
+"Spell forest.",PROMPT
+"Spell major.",PROMPT
+"Spell light.",PROMPT
+"Spell snow again, slowly.",PROMPT
+"Spell winter again, slowly.",PROMPT
+"Spell forest again, slowly.",PROMPT
+"Spell major again, slowly.",PROMPT
+"Spell light again, slowly.",PROMPT
+"Spell snow using both rows.",PROMPT
+"Spell forest using both rows.",PROMPT
+"Spell advocate using both rows.",PROMPT
+"Spell respect using both rows.",PROMPT
+"Spell peace and then use it in a sentence.",PROMPT
+"Spell brave and then use it in a sentence.",PROMPT
+"Spell honest and then use it in a sentence.",PROMPT
+"Spell respect and then use it in a sentence.",PROMPT
+"Let us build snow one letter at a time.",PROMPT
+"Let us build winter one letter at a time.",PROMPT
+"Let us build forest one letter at a time.",PROMPT
+"Let us build major one letter at a time.",PROMPT
+"Let us build light one letter at a time.",PROMPT
+"Check the first letter of snow.",PROMPT
+"Check the first letter of winter.",PROMPT
+"Check the first letter of forest.",PROMPT
+"Check the first letter of major.",PROMPT
+"Check the first letter of light.",PROMPT
+"Check the last letter of snow.",PROMPT
+"Check the last letter of winter.",PROMPT
+"Check the last letter of forest.",PROMPT
+"Check the last letter of major.",PROMPT
+"Check the last letter of light.",PROMPT
+"Spell snow, then tell me what it means.",PROMPT
+"Spell winter, then tell me what it means.",PROMPT
+"Spell forest, then tell me what it means.",PROMPT
+"Spell major, then tell me what it means.",PROMPT
+"Spell light, then tell me what it means.",PROMPT
+"Let us practice three words: snow, winter, forest.",PROMPT
+"Let us practice three words: major, light, home.",PROMPT
+"Let us practice three words: peace, brave, honest.",PROMPT
+"Raise your hand and put it out there.",PROMPT
+"Tap twice on the picture.",PROMPT
+"Point to the first word.",PROMPT
+"Move your hand back to center.",PROMPT
+"Take your time. Reset your hand position.",PROMPT
+"Keep your elbow down and reach forward.",PROMPT
+"Bring your hand to the board.",PROMPT
+"Pause your hand, then continue.",PROMPT
+"Look at the board, then start.",PROMPT
+"Hands quiet, then begin.",PROMPT
+"Keep your eyes on the letters.",PROMPT
+"Hold the board steady.",PROMPT
+"I am going to move the board closer. Keep spelling.",PROMPT
+"Do not look away. Stay with the board.",PROMPT
+"Let me support your wrist lightly. Keep going.",PROMPT
+"Check with your finger again. Same letter.",PROMPT
+"Before you answer, take three seconds to think.",PROMPT
+"Tell me your answer, then tell me why.",PROMPT
+"Say it in a shorter way.",PROMPT
+"Say it in a stronger way.",PROMPT
+"What is one word that summarizes this?",PROMPT
+"Give me two reasons.",PROMPT
+"Find evidence for your answer in the text.",PROMPT
+"What is the cause? What is the effect?",PROMPT
+"Compare these two ideas.",PROMPT
+"What would you change to make this better?",PROMPT
+"Rate your confidence from one to five.",PROMPT
+"Do you want a hint or no hint?",PROMPT
+"What does this sentence mean?",PROMPT
+"Tell me more about this sentence.",PROMPT
+"What makes you say that about this sentence?",PROMPT
+"What is one detail about this sentence?",PROMPT
+"What is the main point of this sentence?",PROMPT
+"What does this paragraph mean?",PROMPT
+"Tell me more about this paragraph.",PROMPT
+"What makes you say that about this paragraph?",PROMPT
+"What is one detail about this paragraph?",PROMPT
+"What is the main point of this paragraph?",PROMPT
+"What does this picture mean?",PROMPT
+"Tell me more about this picture.",PROMPT
+"What makes you say that about this picture?",PROMPT
+"What is one detail about this picture?",PROMPT
+"What is the main point of this picture?",PROMPT
+"What does this word mean?",PROMPT
+"Tell me more about this word.",PROMPT
+"What makes you say that about this word?",PROMPT
+"What is one detail about this word?",PROMPT
+"What is the main point of this word?",PROMPT
+"What does this idea mean?",PROMPT
+"Tell me more about this idea.",PROMPT
+"What makes you say that about this idea?",PROMPT
+"What is one detail about this idea?",PROMPT
+"What is the main point of this idea?",PROMPT
+"Let us practice three spelling words.",PROMPT
+"Start with the first letter.",PROMPT
+"Check the last letter of the word.",PROMPT
+"Try spelling the word again slowly.",PROMPT
+"Spell the word snow.",PROMPT
+"Let us slow down and spell one letter at a time.",PROMPT
+"Try the word again and check the ending.",PROMPT
+"Spell the word using both rows of the board.",PROMPT
+"Let us do three quick spelling words.",PROMPT
+"Explain that idea in your own words.",PROMPT
+"What detail stands out to you?",PROMPT
+"What emotion do you see here?",PROMPT
+"What is the main idea of this sentence?",PROMPT
+"What word would make this sentence stronger?",PROMPT
+"What did you mean by that word?",PROMPT
+"Which part are you referring to?",PROMPT
+"Can you explain that answer?",PROMPT
+"Point to the line you mean.",PROMPT
+"That was a strong effort.",PROMPT
+"Do you want to continue or take a short break?",PROMPT
+"Can you try that one more time?",PROMPT
+"Tell me what you notice first.",PROMPT
+"What stands out most to you?",PROMPT
+"Can you say more about that?",PROMPT
+"What are you thinking here?",PROMPT
+"What is your evidence?",PROMPT
+"Can you find the answer in the text?",PROMPT
+"Show me the word you are talking about.",PROMPT
+"Can you tell me why you chose that?",PROMPT
+"What makes that important?",PROMPT
+"How do you know?",PROMPT
+"Can you explain your thinking?",PROMPT
+"What would happen if that changed?",PROMPT
+"Which answer fits best?",PROMPT
+"Choose the better word.",PROMPT
+"Would you like another example?",PROMPT
+"Do you want a clue?",PROMPT
+"What do you want to work on next?",PROMPT
+"What should we do first?",PROMPT
+"Do you want to spell or explain?",PROMPT
+"Should we check it together?",PROMPT
+"Can you find one more detail?",PROMPT
+"Can you say that more clearly?",PROMPT
+"Tell me the short version first.",PROMPT
+"Now tell me the full idea.",PROMPT
+"Let us go step by step.",PROMPT
+"Say the answer, then prove it.",PROMPT
+"Can you show your thinking in order?",PROMPT
+"What comes first?",PROMPT
+"What comes next?",PROMPT
+"How does it end?",PROMPT
+"Can you summarize it in five words?",PROMPT
+"What is the best answer so far?",PROMPT
+"Take your time and try again.",PROMPT
+"Let us check the beginning of the word.",PROMPT
+"Let us check the middle sound.",PROMPT
+"Let us check the ending sound.",PROMPT
+"Say the sentence again, more slowly.",PROMPT
+"Can you point to the picture clue?",PROMPT
+"Find the part that supports your answer.",PROMPT
+"Tell me the answer in your own words.",PROMPT
+"What is another way to say that?",PROMPT
+"Can you make that more specific?",PROMPT
+"What are two things you notice?",PROMPT
+"What is the biggest difference?",PROMPT
+"What is similar here?",PROMPT
+"Can you compare them?",PROMPT
+"What is your best guess?",PROMPT
+"Take one more look before you answer.",PROMPT
+"The snow is falling outside the window.",NO_PROMPT
+"I flew home in the evening.",NO_PROMPT
+"It snowed last night.",NO_PROMPT
+"The picture shows a house and a tree.",NO_PROMPT
+"There is a lamppost near the road.",NO_PROMPT
+"She walked toward the door.",NO_PROMPT
+"The boy picked up the book.",NO_PROMPT
+"The dog ran across the yard.",NO_PROMPT
+"The room was quiet and warm.",NO_PROMPT
+"The story begins in winter.",NO_PROMPT
+"The character felt nervous.",NO_PROMPT
+"The teacher wrote on the board.",NO_PROMPT
+"The sentence contains three words.",NO_PROMPT
+"The forest was covered in snow.",NO_PROMPT
+"The sun started to set behind the hill.",NO_PROMPT
+"The paragraph describes a family dinner.",NO_PROMPT
+"The picture shows people walking in the snow.",NO_PROMPT
+"The main character lives in a small town.",NO_PROMPT
+"The story ends with a celebration.",NO_PROMPT
+"The word winter appears twice in the paragraph.",NO_PROMPT
+"He was looking out the window.",NO_PROMPT
+"The board had letters in two rows.",NO_PROMPT
+"The room became quieter after that.",NO_PROMPT
+"The child paused before answering.",NO_PROMPT
+"The answer was written in blue ink.",NO_PROMPT
+"There was a small mistake in the spelling.",NO_PROMPT
+"The paragraph is about friendship.",NO_PROMPT
+"The sentence sounds more confident now.",NO_PROMPT
+"Her hand moved slowly across the board.",NO_PROMPT
+"The page has a picture of a forest.",NO_PROMPT
+"The first line introduces the topic.",NO_PROMPT
+"The second paragraph gives more detail.",NO_PROMPT
+"The ending feels more emotional.",NO_PROMPT
+"The text is about a winter evening.",NO_PROMPT
+"The story takes place at home.",NO_PROMPT
+"A child is standing near the table.",NO_PROMPT
+"The lights are reflected in the snow.",NO_PROMPT
+"There is a tree beside the house.",NO_PROMPT
+"The picture looks calm and quiet.",NO_PROMPT
+"The answer includes a strong detail.",NO_PROMPT
+"The sentence is missing a word.",NO_PROMPT
+"The paragraph feels unfinished.",NO_PROMPT
+"The image shows a snowy road.",NO_PROMPT
+"The board is being held close to the student.",NO_PROMPT
+"The student looked tired for a moment.",NO_PROMPT
+"The facilitator stayed beside the board.",NO_PROMPT
+"The word was spelled correctly the second time.",NO_PROMPT
+"The text mentions school and family.",NO_PROMPT
+"The child seemed more confident afterward.",NO_PROMPT
+"The sentence became clearer after revision.",NO_PROMPT
+"The room had a calm atmosphere.",NO_PROMPT
+"The board stayed steady during spelling.",NO_PROMPT
+"The story is written in simple language.",NO_PROMPT
+"This paragraph focuses on the main idea.",NO_PROMPT
+"That sentence gives an example.",NO_PROMPT
+"The answer connects to the picture.",NO_PROMPT
+"The character is thinking about home.",NO_PROMPT
+"The weather in the story is cold.",NO_PROMPT
+"There are footprints in the snow.",NO_PROMPT
+"The child is wearing a coat.",NO_PROMPT
+"The house has a light in the window.",NO_PROMPT
+"The scene feels peaceful.",NO_PROMPT
+"The paragraph has four sentences.",NO_PROMPT
+"The sentence begins with the word because.",NO_PROMPT
+"The picture includes trees and snow.",NO_PROMPT
+"The final sentence gives closure.",NO_PROMPT
+"The story moves from confusion to clarity.",NO_PROMPT
+"The child answered after a short pause.",NO_PROMPT
+"The board contains letters and numbers.",NO_PROMPT
+"The room was bright and organized.",NO_PROMPT
+"The student corrected one letter.",NO_PROMPT
+"The response was short but accurate.",NO_PROMPT
+"The explanation matched the text.",NO_PROMPT
+"The image shows a family inside the house.",NO_PROMPT
+"The first word is underlined.",NO_PROMPT
+"The handwriting is neat and clear.",NO_PROMPT
+"The paragraph introduces a winter memory.",NO_PROMPT
+"The sentence gives a reason for the choice.",NO_PROMPT
+"The story includes both school and family.",NO_PROMPT
+"The picture has a road, snow, and trees.",NO_PROMPT
+"The child looked back at the board.",NO_PROMPT
+"The answer became more complete over time.",NO_PROMPT
+"The scene is set in the evening.",NO_PROMPT
+"The forest looks dark and quiet.",NO_PROMPT
+"The page includes a title and two paragraphs.",NO_PROMPT
+"The student used a stronger word in the revision.",NO_PROMPT
+"The word light appears near the end.",NO_PROMPT
+"The response relates to the picture.",NO_PROMPT
+"The child stayed focused for the task.",NO_PROMPT
+"The final answer was more specific.",NO_PROMPT
+"The story describes a quiet home.",NO_PROMPT
+"The first paragraph sets the mood.",NO_PROMPT
+"The second paragraph adds action.",NO_PROMPT
+"The last line feels hopeful.",NO_PROMPT
+"The picture clue supports the answer.",NO_PROMPT
+"The text includes descriptive language.",NO_PROMPT
+"The sentence was rewritten more clearly.",NO_PROMPT
+"The response included two good reasons.",NO_PROMPT
+"The page shows a winter scene.",NO_PROMPT
+"The child looked at the letters carefully.",NO_PROMPT
+"The board remained in the same position.",NO_PROMPT
+"The room was silent except for the voices.",NO_PROMPT
+"The answer matched the evidence in the text.",NO_PROMPT
+"The student stayed with the task.",NO_PROMPT
+"The paragraph gives context for the scene.",NO_PROMPT
+"The story focuses on one important moment.",NO_PROMPT
+"The image has soft lighting.",NO_PROMPT
+"The response was thoughtful and clear.",NO_PROMPT

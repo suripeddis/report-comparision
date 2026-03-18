@@ -1,5 +1,5 @@
-import ingest_transcript
-from ingest_transcript import read_transcript
+import pipelines.steps.ingest_transcript as ingest_transcript
+from pipelines.steps.ingest_transcript import read_transcript
 
 #text = "Questions or comments on that one?"
 #choices = text.split("or", 1)

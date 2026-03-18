@@ -1,0 +1,194 @@
+prompt_text,functional_type,prompt_kind,style_markers,support_level,cognitive_demand,method_style_likelihood
+Do you want to start with school or family?,Choice Prompt,Choice-based,,Low,Choice,
+Do you want to start with the title or the first paragraph?,Choice Prompt,Choice-based,,Low,Choice,
+Do you want to start with a question or a statement?,Choice Prompt,Choice-based,,Low,Choice,
+"Which one do you want: school, family, or hobbies?",Choice Prompt,Choice-based,,Low,Choice,
+"Which one do you want: the title, the first paragraph, or the ending?",Choice Prompt,Choice-based,,Low,Choice,
+"Which one do you want: a question, a statement, or a prediction?",Choice Prompt,Choice-based,,Low,Choice,
+Do you want to answer with a word or a full sentence?,Choice Prompt,Choice-based,,Low,Choice,
+Should we keep going or take a short break?,Choice Prompt,Choice-based,,Low,Choice,
+Do you want to spell it first or talk about it first?,Choice Prompt,Choice-based,,Low,Choice,
+Do you want to try that again or move on?,Choice Prompt,Choice-based,,Low,Choice,
+Pick one: school or family.,Choice Prompt,Choice-based,,Low,Choice,
+Pick one: the title or the first paragraph.,Choice Prompt,Choice-based,,Low,Choice,
+Pick one: a question or a statement.,Choice Prompt,Choice-based,,Low,Choice,
+Do you want me to repeat the question or show you the keyword?,Choice Prompt,Choice-based,,Low,Choice,
+Do you want to work on school now or family now?,Choice Prompt,Choice-based,,Low,Choice,
+Do you want to work on the title now or the first paragraph now?,Choice Prompt,Choice-based,,Low,Choice,
+Do you want to work on a question now or a statement now?,Choice Prompt,Choice-based,,Low,Choice,
+Which feels easier right now: school or family?,Choice Prompt,Choice-based,,Low,Choice,
+Which feels easier right now: the title or the first paragraph?,Choice Prompt,Choice-based,,Low,Choice,
+Which feels easier right now: a question or a statement?,Choice Prompt,Choice-based,,Low,Choice,
+What are you noticing?,Open-Ended Prompt,Open-ended,,Medium,Observation,
+What do you see first?,Open-Ended Prompt,Open-ended,,Medium,Observation,
+What’s the main idea in one sentence?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+Why do you think that matters?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What might someone disagree with here?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What do you think will happen next?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+How would you explain this to a friend?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What’s one detail you want to add?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What question would you ask about this?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+How does this connect to your life?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What’s the strongest word you could use here?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What emotion do you think is showing up here?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+"When you say “it,” what exactly are you referring to?",Clarification Prompt,Clarification,,Medium,Reasoning,
+Do you mean the character or the setting?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Which part are you talking about—the beginning or the end?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Can you show me where you got stuck?,Clarification Prompt,Clarification,,Medium,Reasoning,
+What does that word mean to you here?,Clarification Prompt,Clarification,,Medium,Reasoning,
+"Are you saying you agree, disagree, or you’re not sure yet?",Clarification Prompt,Clarification,,Medium,Reasoning,
+Can you point to the exact line you mean?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Which sentence are you answering?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Are you referring to what you read or what you inferred?,Clarification Prompt,Clarification,,Medium,Reasoning,
+What’s the “this” in your sentence?,Clarification Prompt,Clarification,,Medium,Reasoning,
+You’re doing great—keep going.,Reinforcement Prompt,Reinforcement,Regulation/encouragement language,Low,Regulation,
+Nice work staying focused.,Reinforcement Prompt,Reinforcement,Regulation/encouragement language,Low,Regulation,
+That was a solid effort. Let’s do one more.,Reinforcement Prompt,Reinforcement,Regulation/encouragement language,Low,Regulation,
+It’s okay to pause. You’re safe here.,Reinforcement Prompt,Reinforcement,Regulation/encouragement language,Low,Regulation,
+Nobody’s judging you.,Reinforcement Prompt,Reinforcement,Regulation/encouragement language,Low,Regulation,
+Take a deep breath.,Reinforcement Prompt,Reinforcement,Regulation/encouragement language,Low,Regulation,
+"Let’s take two breaths, then continue.",Reinforcement Prompt,Reinforcement,Regulation/encouragement language,Low,Regulation,
+Good job correcting yourself.,Reinforcement Prompt,Reinforcement,Regulation/encouragement language,Low,Regulation,
+You can do hard things—one step at a time.,Reinforcement Prompt,Reinforcement,Regulation/encouragement language,Low,Regulation,
+Slow is fine. Accuracy matters more than speed.,Reinforcement Prompt,Reinforcement,Regulation/encouragement language,Low,Regulation,
+Look right here. What do you see?,Guided Prompt,Guided,Body/gesture directive present,High,Observation,
+Point to the keyword in the text.,Guided Prompt,Guided,Pointing/anchoring to text,High,Reasoning,
+Start with the first letter of the word.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: scaffolding/hinting
+Let’s slow down—one letter at a time.,Guided Prompt,Guided,Letterboard/spelling workflow; pacing,High,Recall,S2C/RPM marker: pacing for accuracy
+"Try the word again, but check the ending.",Guided Prompt,Guided,Error correction,High,Self-Monitoring,
+Check your work—does that spelling match the sound?,Guided Prompt,Guided,Metacognitive check,High,Self-Monitoring,
+Use the word in a new sentence.,Guided Prompt,Guided,Transfer practice,Medium,Application,
+Choose a starter phrase: “I think…” or “I notice…”,Guided Prompt,Guided,Sentence starter scaffold,Medium,Application,
+Let’s do three quick practice words.,Guided Prompt,Guided,Letterboard/spelling workflow; drill,High,Recall,S2C/RPM marker: drill/word work
+"Remember: we’re spelling first, then we’ll talk about meaning.",Guided Prompt,Guided,Letterboard/spelling workflow; process reminder,Medium,Meta,S2C/RPM marker: spell-then-meaning
+Let’s spell the word snow.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Let’s spell the word winter.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Let’s spell the word forest.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Let’s spell the word major.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Let’s spell the word light.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Spell snow.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Spell winter.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Spell forest.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Spell major.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Spell light.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+"Spell snow again, slowly.",Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+"Spell winter again, slowly.",Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+"Spell forest again, slowly.",Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+"Spell major again, slowly.",Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+"Spell light again, slowly.",Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Spell snow using both rows.,Guided Prompt,Guided,Letterboard/spelling workflow; board layout reference,High,Recall,S2C/RPM marker: board layout reference
+Spell forest using both rows.,Guided Prompt,Guided,Letterboard/spelling workflow; board layout reference,High,Recall,S2C/RPM marker: board layout reference
+Spell advocate using both rows.,Guided Prompt,Guided,Letterboard/spelling workflow; board layout reference,High,Recall,S2C/RPM marker: board layout reference
+Spell respect using both rows.,Guided Prompt,Guided,Letterboard/spelling workflow; board layout reference,High,Recall,S2C/RPM marker: board layout reference
+Spell peace and then use it in a sentence.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Application,S2C/RPM marker: spell-to-sentence
+Spell brave and then use it in a sentence.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Application,S2C/RPM marker: spell-to-sentence
+Spell honest and then use it in a sentence.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Application,S2C/RPM marker: spell-to-sentence
+Spell respect and then use it in a sentence.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Application,S2C/RPM marker: spell-to-sentence
+Let’s build snow one letter at a time.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Let’s build winter one letter at a time.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Let’s build forest one letter at a time.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Let’s build major one letter at a time.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Let’s build light one letter at a time.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Check the first letter of snow.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Check the first letter of winter.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Check the first letter of forest.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Check the first letter of major.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Check the first letter of light.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Check the last letter of snow.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Check the last letter of winter.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Check the last letter of forest.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Check the last letter of major.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Check the last letter of light.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Spell snow—then tell me what it means.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Spell winter—then tell me what it means.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Spell forest—then tell me what it means.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Spell major—then tell me what it means.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Spell light—then tell me what it means.,Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+"Let’s practice three words: snow, winter, forest.",Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+"Let’s practice three words: major, light, home.",Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+"Let’s practice three words: peace, brave, honest.",Guided Prompt,Guided,Letterboard/spelling workflow,High,Recall,S2C/RPM marker: letterboard workflow
+Raise your hand and put it out there.,Guided Prompt,Guided,Physical/motor directive present; Body/gesture directive present,High,Motor,RPM/FC marker: physical prompting risk
+Tap twice on the picture.,Guided Prompt,Guided,Physical/motor directive present; Body/gesture directive present,High,Motor,RPM/FC marker: physical prompting risk
+Point to the first word.,Guided Prompt,Guided,Physical/motor directive present; Body/gesture directive present,High,Motor,RPM/FC marker: physical prompting risk
+Move your hand back to center.,Guided Prompt,Guided,Physical/motor directive present; Body/gesture directive present,High,Motor,RPM/FC marker: physical prompting risk
+Take your time—reset your hand position.,Guided Prompt,Guided,Physical/motor directive present; Body/gesture directive present,High,Motor,RPM/FC marker: physical prompting risk
+Keep your elbow down and reach forward.,Guided Prompt,Guided,Physical/motor directive present; Body/gesture directive present,High,Motor,RPM/FC marker: physical prompting risk
+Bring your hand to the board.,Guided Prompt,Guided,Physical/motor directive present; Body/gesture directive present,High,Motor,RPM/FC marker: physical prompting risk
+"Pause your hand, then continue.",Guided Prompt,Guided,Physical/motor directive present; Body/gesture directive present,High,Motor,RPM/FC marker: physical prompting risk
+"Look at the board, then start.",Guided Prompt,Guided,Physical/motor directive present; Body/gesture directive present,High,Motor,RPM/FC marker: physical prompting risk
+Hands quiet—then begin.,Guided Prompt,Guided,Physical/motor directive present; Body/gesture directive present,High,Motor,RPM/FC marker: physical prompting risk
+Keep your eyes on the letters.,Guided Prompt,Guided,Body/gesture directive present; eye-gaze management,High,Motor,RPM/FC marker: eye-gaze/positioning
+Hold the board steady.,Guided Prompt,Guided,Board/positioning management,High,Motor,FC marker: facilitator positioning
+I’m going to move the board closer—keep spelling.,Guided Prompt,Guided,Board repositioning; facilitator adjustment,High,Motor,FC marker: facilitator adjustment
+Don’t look away—stay with the board.,Guided Prompt,Guided,Attention control; body directive,High,Motor,RPM/FC marker: attention control
+Let me support your wrist lightly—keep going.,Guided Prompt,Guided,Physical support mention,High,Motor,FC marker: physical support
+Check with your finger again—same letter.,Guided Prompt,Guided,Letter confirmation; recheck,High,Self-Monitoring,S2C/RPM marker: recheck/confirm
+"Before you answer, take 3 seconds to think.",Guided Prompt,Guided,Wait-time; pacing,Medium,Self-Monitoring,
+"Tell me your answer, then tell me why.",Guided Prompt,Guided,Two-step response,Medium,Reasoning,
+Say it in a shorter way.,Guided Prompt,Guided,Revision/conciseness,Medium,Reasoning,
+Say it in a stronger way.,Guided Prompt,Guided,Revision/wording,Medium,Reasoning,
+What’s one word that summarizes this?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+Give me two reasons.,Guided Prompt,Guided,Reasoning scaffold,Medium,Reasoning,
+Find evidence for your answer in the text.,Guided Prompt,Guided,Text-based evidence,High,Reasoning,
+What’s the cause? What’s the effect?,Guided Prompt,Guided,Structure scaffold,Medium,Reasoning,
+Compare these two ideas.,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What would you change to make this better?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+Rate your confidence 1–5.,Guided Prompt,Meta-Cognitive Prompt,Metacognitive rating,Low,Self-Monitoring,
+Do you want a hint or no hint?,Choice Prompt,Choice-based,,Low,Choice,
+What does this sentence mean?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Tell me more about this sentence.,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What makes you say that about this sentence?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What’s one detail about this sentence?,Open-Ended Prompt,Open-ended,,Medium,Observation,
+What’s the main point of this sentence?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What does this paragraph mean?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Tell me more about this paragraph.,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What makes you say that about this paragraph?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What’s one detail about this paragraph?,Open-Ended Prompt,Open-ended,,Medium,Observation,
+What’s the main point of this paragraph?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What does this picture mean?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Tell me more about this picture.,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What makes you say that about this picture?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What’s one detail about this picture?,Open-Ended Prompt,Open-ended,,Medium,Observation,
+What’s the main point of this picture?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What does this word mean?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Tell me more about this word.,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What makes you say that about this word?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What’s one detail about this word?,Open-Ended Prompt,Open-ended,,Medium,Observation,
+What’s the main point of this word?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What does this idea mean?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Tell me more about this idea.,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What makes you say that about this idea?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What’s one detail about this idea?,Open-Ended Prompt,Open-ended,,Medium,Observation,
+What’s the main point of this idea?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+Let’s practice three spelling words.,Guided Prompt,Guided,,High,Recall,
+Start with the first letter.,Guided Prompt,Guided,,High,Recall,
+Check the last letter of the word.,Guided Prompt,Guided,,High,Recall,
+Try spelling the word again slowly.,Guided Prompt,Guided,,High,Recall,
+Spell the word snow.,Guided Prompt,Guided,,High,Recall,
+Let’s slow down and spell one letter at a time.,Guided Prompt,Guided,,High,Recall,
+Try the word again and check the ending.,Guided Prompt,Guided,,High,Self-Monitoring,
+Spell the word using both rows of the board.,Guided Prompt,Guided,,High,Recall,
+Let’s do three quick spelling words.,Guided Prompt,Guided,,High,Recall,
+How does this connect to your life?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What do you think will happen next?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+Why do you think that matters?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+Explain that idea in your own words.,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What detail stands out to you?,Open-Ended Prompt,Open-ended,,Medium,Observation,
+What emotion do you see here?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What is the main idea of this sentence?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+Compare these two ideas.,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What word would make this sentence stronger?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What might someone disagree with here?,Open-Ended Prompt,Open-ended,,Medium,Reasoning,
+What did you mean by that word?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Which part are you referring to?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Can you explain that answer?,Clarification Prompt,Clarification,,Medium,Reasoning,
+Point to the line you mean.,Clarification Prompt,Clarification,,Medium,Reasoning,
+You are doing great. Keep going.,Reinforcement Prompt,Reinforcement,encouragement,Low,Regulation,
+Nice work staying focused.,Reinforcement Prompt,Reinforcement,encouragement,Low,Regulation,
+That was a strong effort.,Reinforcement Prompt,Reinforcement,encouragement,Low,Regulation,
+Take a deep breath.,Reinforcement Prompt,Reinforcement,encouragement,Low,Regulation,
+Slow is fine. Accuracy matters more than speed.,Reinforcement Prompt,Reinforcement,encouragement,Low,Regulation,
+Would you like to start with the title or the paragraph?,Choice Prompt,Choice-based,,Low,Choice,
+Do you want to answer with a word or a full sentence?,Choice Prompt,Choice-based,,Low,Choice,
+Which feels easier right now: school or family?,Choice Prompt,Choice-based,,Low,Choice,
+Do you want to continue or take a short break?,Choice Prompt,Choice-based,,Low,Choice,
