@@ -1,20 +1,12 @@
 import re
 
 
-# def read_transcript(file_uploaded):
-#     document = file_uploaded.read()
-#     document = document.decode("utf-8", errors="replace")
+def read_transcript(file_uploaded) -> str:
+    """Parse an SRT file and return its plain-text content.
 
-#     pattern = r"\d+\n\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}\n"
-#     cleaned_content = re.sub(pattern, "", document)
-
-#     lines = cleaned_content.splitlines()
-#     print("TOTAL LINES AFTER CLEAN:", len(lines))
-#     return lines
-
-def read_transcript(file_uploaded):
+    Strips all SRT sequence numbers and timestamp lines, leaving only
+    the spoken-word content.
+    """
     document = file_uploaded.read().decode("utf-8", errors="replace")
     pattern = r"\d+\n\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}\n"
     return re.sub(pattern, "", document)
-
-

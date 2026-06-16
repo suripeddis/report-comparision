@@ -1,0 +1,727 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #ffffff;
+    color: #111827;
+    padding: 28px 32px 48px;
+    font-size: 14px;
+    line-height: 1.5;
+    width: 100%;
+}
+
+/* ── Header ── */
+.rpt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #E5E7EB;
+}
+.rpt-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #9CA3AF;
+    margin-bottom: 6px;
+}
+.rpt-filename {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.5px;
+}
+.rpt-date { font-size: 13px; color: #9CA3AF; padding-bottom: 3px; }
+
+/* ── Stat cards ── */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.stat-card {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 20px 22px 16px;
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: var(--accent, #E5E7EB);
+    border-radius: 12px 12px 0 0;
+}
+.stat-card.c-total  { --accent: #D1D5DB; }
+.stat-card.c-types  { --accent: #D1D5DB; }
+.stat-card.c-s2c    { --accent: #6366F1; }
+.stat-card.c-rpm    { --accent: #0EA5E9; }
+.stat-num {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 8px;
+    color: #111827;
+}
+.stat-lbl {
+    font-size: 11px;
+    font-weight: 500;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ── Two-column panel row ── */
+.panel-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+.panel {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 22px 26px;
+}
+.panel-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: center;
+    background: #F3F4F6;
+    border-bottom: 1px solid #E5E7EB;
+    margin: -22px -26px 18px;
+    padding: 10px 14px;
+    border-radius: 14px 14px 0 0;
+}
+/* Inline title inside Classified prompts topbar — keep left-aligned, no banner. */
+.table-topbar .panel-title {
+    background: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: #9CA3AF;
+}
+/* Timeline / trend panels use their own padding — re-anchor banner margins. */
+.timeline-panel .panel-title { margin: -20px -26px 14px; }
+.trend-panel    .panel-title { margin: -22px -26px 14px; }
+
+/* ── Donut + legend ── */
+.donut-row { display: flex; align-items: center; gap: 24px; margin-bottom: 22px; }
+.donut-wrap { position: relative; flex-shrink: 0; }
+.donut-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center; pointer-events: none;
+}
+.donut-center-num { font-size: 26px; font-weight: 700; letter-spacing: -1px; }
+.donut-center-lbl { font-size: 10px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.4px; }
+.legend-item {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px; font-size: 13px;
+}
+.legend-left { display: flex; align-items: center; gap: 9px; }
+.legend-swatch { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+.legend-name { color: #6B7280; }
+.legend-val { font-weight: 600; color: #374151; }
+.legend-pct { color: #D1D5DB; font-weight: 400; margin-left: 4px; }
+
+/* ── Bar chart ── */
+.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.bar-lbl { width: 120px; font-size: 12px; color: #6B7280; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; height: 30px; background: #F0F0EE; border-radius: 6px; overflow: hidden; }
+.bar-fill {
+    height: 100%; border-radius: 6px;
+    display: flex; align-items: center; padding-left: 10px;
+    font-size: 12px; font-weight: 600;
+    width: 0;
+    transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Per-method type counts (own section) ── */
+.mtc-wrap {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 14px;
+}
+.mtc-wrap .panel-title { margin: -22px -26px 18px; }
+.mtc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.mtc-group { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 10px; overflow: hidden; }
+.mtc-head {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.6px;
+    padding: 7px 12px; text-align: center; border-bottom: 1px solid #E5E7EB;
+}
+.mtc-head.mtc-s2c { background: #EEF2FF; color: #3730A3; }
+.mtc-head.mtc-rpm { background: #E0F2FE; color: #0369A1; }
+.mtc-head.mtc-dwk { background: #F3E8FF; color: #581C87; }
+.mtc-list { list-style: none; margin: 0; padding: 6px 12px; }
+.mtc-item {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 8px; padding: 5px 0; font-size: 12px;
+    border-bottom: 1px dashed #F3F4F6;
+}
+.mtc-item:last-child { border-bottom: none; }
+.mtc-name { color: #6B7280; }
+.mtc-val  { font-weight: 700; color: #111827; }
+.mtc-empty { color: #9CA3AF; font-style: italic; font-size: 12px; padding: 5px 0; list-style: none; }
+
+/* ── Method panel ── */
+.method-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+.method-card {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 18px; border-radius: 12px;
+}
+.mc-s2c { background: linear-gradient(120deg, #EEF2FF 0%, #E0E7FF 100%); border: 1px solid #C7D2FE; }
+.mc-rpm { background: linear-gradient(120deg, #E0F2FE 0%, #BAE6FD 100%); border: 1px solid #7DD3FC; }
+.mc-icon { font-size: 28px; line-height: 1; }
+.mc-info { flex: 1; }
+.mc-tag  { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; }
+.mc-s2c .mc-tag  { color: #4338CA; }
+.mc-rpm .mc-tag  { color: #0369A1; }
+.mc-name { font-size: 11px; color: #6B7280; margin-top: 2px; }
+.mc-count { font-size: 36px; font-weight: 700; letter-spacing: -1.5px; line-height: 1; }
+.mc-s2c .mc-count { color: #3730A3; }
+.mc-rpm .mc-count { color: #0C4A6E; }
+.mc-pct  { font-size: 11px; color: #9CA3AF; margin-top: 3px; }
+
+.split-bar {
+    display: flex; height: 10px; border-radius: 99px; overflow: hidden;
+    background: #E5E7EB; margin-bottom: 10px;
+}
+.sb-s2c { background: #6366F1; }
+.sb-rpm { background: #0EA5E9; }
+.split-legend { display: flex; gap: 18px; font-size: 12px; color: #9CA3AF; }
+.sl-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; vertical-align: middle; }
+
+/* ── Timeline ── */
+.timeline-panel {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 20px 26px;
+    margin-bottom: 14px;
+}
+.timeline-sub {
+    font-size: 11px; color: #C4C4C0; font-weight: 400;
+    text-transform: none; letter-spacing: 0; margin-left: 8px;
+}
+.timeline-strip { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 14px; }
+.t-dot {
+    width: 22px; height: 22px; border-radius: 5px;
+    cursor: pointer; opacity: 0.82;
+    transition: transform 0.12s ease, opacity 0.2s ease;
+}
+.t-dot:hover { transform: scale(1.45); opacity: 1; z-index: 5; }
+
+/* ── Trend chart ── */
+.trend-panel {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 14px;
+}
+.trend-legend {
+    display: flex; flex-wrap: wrap; gap: 14px;
+    margin-top: 14px;
+}
+.trend-legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: #6B7280;
+}
+.trend-legend-swatch {
+    width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0;
+}
+
+/* ── Table ── */
+.table-panel {
+    border: 1px solid #E5E7EB;
+    border-radius: 14px;
+    overflow: hidden;
+}
+.table-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 22px;
+    border-bottom: 1px solid #E5E7EB;
+    background: #FAFAFA;
+}
+.filters { display: flex; gap: 6px; }
+.fbtn {
+    padding: 5px 14px; border-radius: 7px; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.3px; border: 1px solid #E5E7EB; background: #fff;
+    color: #6B7280; cursor: pointer; transition: all 0.15s; font-family: inherit;
+}
+.fbtn:hover { background: #F3F4F6; }
+.fbtn.active       { background: #111827; color: #fff; border-color: #111827; }
+.fbtn.fs2c.active  { background: #6366F1; color: #fff; border-color: #6366F1; }
+.fbtn.frpm.active  { background: #0EA5E9; color: #fff; border-color: #0EA5E9; }
+.fbtn.fdwk.active  { background: #9333EA; color: #fff; border-color: #9333EA; }
+
+table { width: 100%; border-collapse: collapse; }
+th {
+    text-align: left; padding: 11px 22px;
+    font-size: 11px; color: #9CA3AF;
+    border-bottom: 1px solid #E5E7EB;
+    text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500;
+    background: #FAFAFA;
+}
+td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middle; }
+.data-row:last-child td { border-bottom: none; }
+.data-row { transition: background 0.1s; }
+.data-row:hover td { background: #F9FAFB; }
+.data-row.hidden { display: none; }
+
+.row-num { font-size: 11px; font-weight: 600; color: #D1D5DB; }
+.prompt-cell { font-size: 14px; color: #374151; }
+.badge { display: inline-block; padding: 3px 11px; border-radius: 99px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.mbadge { font-size: 10px; letter-spacing: 0.5px; }
+/* ── Method-prompt tables (inside Classified Prompts) ── */
+.mt-table-wrap { display: none; }
+.mt-table-wrap.active { display: block; }
+.mt-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #FFFFFF;
+}
+.mt-table th {
+    background: #FAFAFA;
+    color: #6B7280;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 11px 22px;
+    border-bottom: 1px solid #E5E7EB;
+    text-align: left;
+}
+.mt-table th.mt-type-col { width: 200px; }
+.mt-table td {
+    padding: 13px 22px;
+    border-bottom: 1px solid #F3F4F6;
+    vertical-align: middle;
+    font-size: 14px;
+    color: #374151;
+}
+.mt-table tr:last-child td { border-bottom: none; }
+.mt-type-cell { white-space: nowrap; }
+.mt-prompt-cell { line-height: 1.45; }
+.mt-empty { color: #9CA3AF; font-style: italic; text-align: center; }
+.diwakar-cell { display: flex; flex-wrap: wrap; gap: 4px; }
+.dbadge { font-size: 10px; padding: 2px 9px; }
+
+/* ── Method-Breakdown legend ── */
+.ml-wrap { margin-top: 22px; display: grid; gap: 14px; }
+.ml-block {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.ml-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    padding: 9px 14px;
+    text-align: center;
+    border-bottom: 1px solid #E5E7EB;
+}
+.ml-title.ml-s2c { background: #EEF2FF; color: #3730A3; }
+.ml-title.ml-rpm { background: #E0F2FE; color: #0369A1; }
+.ml-title.ml-dwk { background: #F3E8FF; color: #581C87; }
+.ml-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 14px;
+}
+.ml-item {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: #374151;
+    border-bottom: 1px dashed #F3F4F6;
+}
+.ml-item:last-child { border-bottom: none; }
+.ml-num   { color: #9CA3AF; font-size: 12px; min-width: 22px; }
+.ml-label { font-weight: 600; color: #111827; }
+.ml-desc  { color: #6B7280; }
+.ml-desc::before { content: '— '; color: #D1D5DB; margin: 0 4px; }
+</style>
+
+<!-- ── Report header ── -->
+<div class="rpt-header">
+    <div>
+        <div class="rpt-eyebrow">AAC Session Report</div>
+        <div class="rpt-filename">{file_name}</div>
+    </div>
+    <div class="rpt-date">{report_date}</div>
+</div>
+
+<!-- ── Stat cards ── -->
+<div class="stat-grid">
+    <div class="stat-card c-total">
+        <div class="stat-num" data-target="{total_prompts}">0</div>
+        <div class="stat-lbl">Total prompts</div>
+    </div>
+    <div class="stat-card c-types">
+        <div class="stat-num" data-target="{total_categories}">0</div>
+        <div class="stat-lbl">Types used</div>
+    </div>
+    <div class="stat-card c-s2c">
+        <div class="stat-num" data-target="{s2c_count}">0</div>
+        <div class="stat-lbl">S2C prompts</div>
+    </div>
+    <div class="stat-card c-rpm">
+        <div class="stat-num" data-target="{rpm_count}">0</div>
+        <div class="stat-lbl">RPM prompts</div>
+    </div>
+</div>
+
+<!-- ── Two-column panels ── -->
+<div class="panel-row">
+
+    <!-- Prompt types -->
+    <div class="panel">
+        <div class="panel-title">Prompt types</div>
+        <div class="donut-row">
+            <div class="donut-wrap">
+                <canvas id="donutCanvas" width="140" height="140"></canvas>
+                <div class="donut-center">
+                    <div class="donut-center-num">{total_prompts}</div>
+                    <div class="donut-center-lbl">prompts</div>
+                </div>
+            </div>
+            <div id="donutLegend" style="flex:1"></div>
+        </div>
+        <div id="distBars"></div>
+    </div>
+
+    <!-- Method split -->
+    <div class="panel">
+        <div class="panel-title">Method breakdown</div>
+        <div class="method-cards">
+            <div class="method-card mc-s2c">
+                <div class="mc-icon">✋</div>
+                <div class="mc-info">
+                    <div class="mc-tag">S2C</div>
+                    <div class="mc-name">Spelling to Communicate</div>
+                </div>
+                <div>
+                    <div class="mc-count">{s2c_count}</div>
+                    <div class="mc-pct">{s2c_pct}% of session</div>
+                </div>
+            </div>
+            <div class="method-card mc-rpm">
+                <div class="mc-icon">💡</div>
+                <div class="mc-info">
+                    <div class="mc-tag">RPM</div>
+                    <div class="mc-name">Rapid Prompting Method</div>
+                </div>
+                <div>
+                    <div class="mc-count">{rpm_count}</div>
+                    <div class="mc-pct">{rpm_pct}% of session</div>
+                </div>
+            </div>
+        </div>
+        <div class="split-bar">
+            <div class="sb-s2c" id="sbS2C"></div>
+            <div class="sb-rpm" id="sbRPM"></div>
+        </div>
+        <div class="split-legend">
+            <span><span class="sl-dot" style="background:#6366F1"></span>S2C · {s2c_pct}%</span>
+            <span><span class="sl-dot" style="background:#0EA5E9"></span>RPM · {rpm_pct}%</span>
+        </div>
+
+        <div class="ml-wrap">
+            <div class="ml-block">
+                <div class="ml-title ml-s2c">S2C</div>
+                <ol class="ml-list">{s2c_legend}</ol>
+            </div>
+            <div class="ml-block">
+                <div class="ml-title ml-rpm">RPM</div>
+                <ol class="ml-list">{rpm_legend}</ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Per-method type counts ── -->
+<div class="mtc-wrap">
+    <div class="panel-title">Counts by method</div>
+    <div class="mtc-grid">{method_type_counts}</div>
+</div>
+
+<!-- ── Session timeline ── -->
+<div class="timeline-panel">
+    <div class="panel-title">
+        Session timeline
+        <span class="timeline-sub">— each block is one prompt in order; hover to preview</span>
+    </div>
+    <div class="timeline-strip" id="timeline"></div>
+</div>
+
+<!-- ── Cross-session trend chart (hidden when no history) ── -->
+<div id="trendSection" style="display:none" class="trend-panel">
+    <div class="panel-title">
+        Prompt type trends — prior sessions
+        <span class="timeline-sub">— stacked bars show how the prompt mix has shifted over time</span>
+    </div>
+    <canvas id="trendCanvas" height="220" style="width:100%;display:block;margin-top:14px"></canvas>
+    <div class="trend-legend" id="trendLegend"></div>
+</div>
+
+<!-- ── Classified prompts (tabbed by method) ── -->
+<div class="table-panel">
+    <div class="table-topbar">
+        <div class="panel-title">Classified prompts</div>
+        <div class="filters">
+            <button class="fbtn fs2c active" data-filter="s2c">S2C</button>
+            <button class="fbtn frpm"        data-filter="rpm">RPM</button>
+            <button class="fbtn fdwk"        data-filter="diwakar">Diwakar's</button>
+        </div>
+    </div>
+    <div class="mt-table-wrap active" data-method="s2c">
+        <table class="mt-table">
+            <thead>
+                <tr>
+                    <th class="mt-type-col">Type</th>
+                    <th>Prompt</th>
+                </tr>
+            </thead>
+            <tbody>{s2c_table_rows}</tbody>
+        </table>
+    </div>
+    <div class="mt-table-wrap" data-method="rpm">
+        <table class="mt-table">
+            <thead>
+                <tr>
+                    <th class="mt-type-col">Type</th>
+                    <th>Prompt</th>
+                </tr>
+            </thead>
+            <tbody>{rpm_table_rows}</tbody>
+        </table>
+    </div>
+    <div class="mt-table-wrap" data-method="diwakar">
+        <table class="mt-table">
+            <thead>
+                <tr>
+                    <th class="mt-type-col">Type(s)</th>
+                    <th>Prompt</th>
+                </tr>
+            </thead>
+            <tbody>{diwakar_table_rows}</tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const DATA = {chart_data};
+const TREND_DATA = {trend_data};
+
+/* ── Animated counters ── */
+document.querySelectorAll('[data-target]').forEach(el => {
+    const end = parseInt(el.dataset.target, 10);
+    const t0 = performance.now();
+    const dur = 900;
+    (function tick(now) {
+        const p = Math.min((now - t0) / dur, 1);
+        el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * end);
+        if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+});
+
+/* ── Split bar ── */
+document.getElementById('sbS2C').style.width = '{s2c_pct}%';
+document.getElementById('sbRPM').style.width = '{rpm_pct}%';
+
+/* Capitalize first letter and replace underscores for any label that
+   doesn't have a friendly version in DATA.typeLabels. */
+const humanize = s => (s || '').replace(/_/g, ' ').replace(/^./, c => c.toUpperCase());
+
+/* ── Donut chart ── */
+(function() {
+    const canvas = document.getElementById('donutCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const cx = 70, cy = 70, r = 52, lw = 17, GAP = 0.05;
+    const entries = Object.entries(DATA.counts).sort((a, b) => b[1] - a[1]);
+    const total = entries.reduce((s, [, v]) => s + v, 0);
+    let angle = -Math.PI / 2;
+
+    entries.forEach(([type, count]) => {
+        const full  = (count / total) * Math.PI * 2;
+        const sweep = Math.max(0, full - GAP);
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, angle + GAP / 2, angle + GAP / 2 + sweep);
+        ctx.strokeStyle = DATA.colorMap[type] || '#ccc';
+        ctx.lineWidth = lw;
+        ctx.lineCap = 'butt';
+        ctx.stroke();
+        angle += full;
+    });
+
+    const legend = document.getElementById('donutLegend');
+    entries.forEach(([type, count]) => {
+        const pct = Math.round(count / total * 100);
+        legend.innerHTML += `
+            <div class="legend-item">
+                <div class="legend-left">
+                    <div class="legend-swatch" style="background:${DATA.colorMap[type]||'#ccc'}"></div>
+                    <span class="legend-name">${DATA.typeLabels[type]||humanize(type)}</span>
+                </div>
+                <span class="legend-val">${count}<span class="legend-pct">${pct}%</span></span>
+            </div>`;
+    });
+})();
+
+/* ── Distribution bars ── */
+(function() {
+    const container = document.getElementById('distBars');
+    const entries = Object.entries(DATA.counts).sort((a, b) => b[1] - a[1]);
+    const max = Math.max(...entries.map(([, v]) => v));
+    entries.forEach(([type, count]) => {
+        const pct   = (count / max) * 100;
+        const color = DATA.colorMap[type] || '#ccc';
+        const label = DATA.typeLabels[type] || humanize(type);
+        const div   = document.createElement('div');
+        div.className = 'bar-row';
+        div.innerHTML = `
+            <div class="bar-lbl">${label}</div>
+            <div class="bar-track">
+                <div class="bar-fill" data-w="${pct}" style="background:${color}">${count}</div>
+            </div>`;
+        container.appendChild(div);
+    });
+    requestAnimationFrame(() =>
+        document.querySelectorAll('.bar-fill[data-w]').forEach(el => {
+            el.style.width = el.dataset.w + '%';
+        })
+    );
+})();
+
+/* ── Timeline ── */
+(function() {
+    const strip = document.getElementById('timeline');
+    const activeBtn = document.querySelector('.fbtn.active');
+    const activeMethod = activeBtn ? activeBtn.dataset.filter : '';
+    DATA.sequence.forEach((item, i) => {
+        const d = document.createElement('div');
+        d.className = 't-dot';
+        d.style.background = DATA.colorMap[item.type] || '#ccc';
+        d.dataset.method = item.method || '';
+        d.title = `#${i + 1}  [${(item.method||'').toUpperCase()}]  ${item.text}`;
+        d.style.opacity = (item.method === activeMethod) ? '0.82' : '0.15';
+        strip.appendChild(d);
+    });
+})();
+
+/* ── Cross-session trend chart ── */
+(function() {
+    const sessions = TREND_DATA.sessions;
+    if (!sessions || sessions.length < 2) return;
+
+    document.getElementById('trendSection').style.display = 'block';
+
+    const canvas = document.getElementById('trendCanvas');
+    const panel  = canvas.closest('.trend-panel');
+    const W = panel.clientWidth - 52;
+    canvas.width = W;
+    const H = 220;
+
+    const ctx = canvas.getContext('2d');
+    const typeSet = new Set();
+    sessions.forEach(s => Object.keys(s.pcts || {}).forEach(t => typeSet.add(t)));
+    const TYPES = Array.from(typeSet);
+    const N = sessions.length;
+    const leftPad   = 10;
+    const bottomPad = 46;
+    const chartH = H - bottomPad;
+    const groupW = (W - leftPad) / N;
+    const barW   = Math.min(56, groupW * 0.6);
+
+    sessions.forEach((session, i) => {
+        const xCenter = leftPad + (i + 0.5) * groupW;
+        const x = xCenter - barW / 2;
+        let stackY = chartH;
+
+        TYPES.forEach(type => {
+            const pct = session.pcts[type] || 0;
+            if (pct === 0) return;
+            const segH = (pct / 100) * chartH;
+            stackY -= segH;
+            ctx.fillStyle = DATA.colorMap[type] || '#ccc';
+            ctx.fillRect(x, stackY, barW, segH);
+        });
+
+        // Date label
+        ctx.fillStyle = '#9CA3AF';
+        ctx.font = '10px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        const datePart = (session.label || '').slice(5);   // MM-DD
+        ctx.fillText(datePart, xCenter, chartH + 16);
+
+        // Topic label (truncated)
+        const topicRaw = session.topic || '';
+        const topicLabel = topicRaw.length > 14 ? topicRaw.slice(0, 13) + '…' : topicRaw;
+        ctx.fillStyle = '#D1D5DB';
+        ctx.font = '9px Inter, sans-serif';
+        ctx.fillText(topicLabel, xCenter, chartH + 28);
+
+        // Total count
+        ctx.fillStyle = '#9CA3AF';
+        ctx.font = '9px Inter, sans-serif';
+        ctx.fillText(session.total + ' prompts', xCenter, chartH + 40);
+    });
+
+    // Legend
+    const legend = document.getElementById('trendLegend');
+    TYPES.forEach(type => {
+        if (!DATA.typeLabels[type]) return;
+        const item = document.createElement('div');
+        item.className = 'trend-legend-item';
+        item.innerHTML =
+            '<div class="trend-legend-swatch" style="background:' + (DATA.colorMap[type] || '#ccc') + '"></div>' +
+            DATA.typeLabels[type];
+        legend.appendChild(item);
+    });
+})();
+
+/* ── Method tabs (Classified Prompts) ── */
+document.querySelectorAll('.fbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        document.querySelectorAll('.mt-table-wrap').forEach(w => {
+            w.classList.toggle('active', w.dataset.method === f);
+        });
+        const isMethod = f === 's2c' || f === 'rpm';
+        document.querySelectorAll('.t-dot').forEach(dot => {
+            dot.style.opacity = !isMethod || dot.dataset.method === f ? '0.82' : '0.15';
+        });
+    });
+});
+</script>
