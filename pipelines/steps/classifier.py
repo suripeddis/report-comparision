@@ -6,7 +6,34 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+_client = None
+
+
+def _get_secret(name: str):
+    """Read a config value from the environment, falling back to Streamlit secrets."""
+    val = os.getenv(name)
+    if val:
+        return val
+    try:
+        import streamlit as st
+        if name in st.secrets:
+            return st.secrets[name]
+    except Exception:
+        pass
+    return None
+
+
+def _get_client():
+    global _client
+    if _client is None:
+        api_key = _get_secret("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError(
+                "OPENAI_API_KEY must be set. Locally, check your .env file; "
+                "on Streamlit Cloud, set it in the app's Secrets."
+            )
+        _client = OpenAI(api_key=api_key)
+    return _client
 
 def _extract_json(raw: str) -> list:
     """Parse the model response robustly regardless of formatting."""
@@ -24,7 +51,7 @@ def _extract_json(raw: str) -> list:
 
 
 def classify_transcript(transcript_text):
-    response = client.chat.completions.create(
+    response = _get_client().chat.completions.create(
         model="gpt-4.1-mini",
         temperature=0,
         seed=42,

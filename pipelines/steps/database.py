@@ -6,21 +6,39 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-
 _client = None
+
+
+def _get_secret(name: str):
+    """Read a config value from the environment, falling back to Streamlit secrets.
+
+    Locally these come from .env (via load_dotenv); on Streamlit Cloud they come
+    from the app's Secrets (st.secrets), which aren't always exposed as plain
+    environment variables.
+    """
+    val = os.getenv(name)
+    if val:
+        return val
+    try:
+        import streamlit as st
+        if name in st.secrets:
+            return st.secrets[name]
+    except Exception:
+        pass
+    return None
 
 
 def _get_client():
     global _client
     if _client is None:
-        if not SUPABASE_URL or not SUPABASE_KEY:
+        url = _get_secret("SUPABASE_URL")
+        key = _get_secret("SUPABASE_KEY")
+        if not url or not key:
             raise ValueError(
-                "SUPABASE_URL and SUPABASE_KEY must be set in environment variables. "
-                "Check your .env file."
+                "SUPABASE_URL and SUPABASE_KEY must be set. Locally, check your "
+                ".env file; on Streamlit Cloud, set them in the app's Secrets."
             )
-        _client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        _client = create_client(url, key)
     return _client
 
 
