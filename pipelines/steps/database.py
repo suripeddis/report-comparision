@@ -83,6 +83,20 @@ def save_session(
     _retry(lambda: _get_client().table("sessions").insert(payload).execute())
 
 
+def update_session(session_id, results: list, topic: str = None) -> None:
+    """Overwrite the classified prompts (and optionally topic) of an existing row.
+
+    Used to permanently upgrade a saved session in place — e.g. re-analyzing it
+    so it picks up newer classifier output — instead of inserting a duplicate.
+    """
+    payload = {"classified_prompts": results}
+    if topic:
+        payload["topic"] = topic
+    _retry(lambda: (
+        _get_client().table("sessions").update(payload).eq("id", session_id).execute()
+    ))
+
+
 def get_session_by_file(student_id: str, file_name: str) -> dict | None:
     """Return an existing session for a student+file combo, or None if not found."""
     response = _retry(lambda: (

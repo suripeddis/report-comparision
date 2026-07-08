@@ -6,7 +6,12 @@ from html import escape as he
 
 from pipelines.steps.ingest_transcript import read_transcript
 from pipelines.steps.classifier import classify_transcript
-from pipelines.steps.database import save_session, get_student_sessions, get_session_by_file
+from pipelines.steps.database import (
+    save_session,
+    update_session,
+    get_student_sessions,
+    get_session_by_file,
+)
 from pipelines.steps.metrics import (
     count_prompt_types,
     count_methods,
@@ -35,6 +40,18 @@ S2C_TYPE_MAP = {
     "none":         {"fill": "#D1D5DB", "badge_bg": "#F3F4F6", "badge_text": "#374151", "label": "None",         "desc": "Independent selection without prompting."},
 }
 
+# Spellers Method — a motor-execution prompting framework (see PROJECT_SPEC §1.4).
+# initiation/continuation/none reuse the S2C fills so the donut's shared type
+# colors don't change; the badge colors give Spellers its own green identity.
+SPELLERS_TYPE_MAP = {
+    "initiation":   {"fill": "#A5B4FC", "badge_bg": "#D1FAE5", "badge_text": "#065F46", "label": "Initiation",   "desc": "Cue to start a movement sequence (often the hardest part for apraxia)."},
+    "gestural":     {"fill": "#5EEAD4", "badge_bg": "#CCFBF1", "badge_text": "#115E59", "label": "Gestural",     "desc": "Hand/finger cue supporting visual orientation toward the board."},
+    "directional":  {"fill": "#A3E635", "badge_bg": "#ECFCCB", "badge_text": "#3F6212", "label": "Directional",  "desc": "Verbal cue guiding the movement path (up/down/over) — highest dependency risk."},
+    "eye":          {"fill": "#2DD4BF", "badge_bg": "#CCFBF1", "badge_text": "#134E4A", "label": "Eye",          "desc": "Cue to keep visual attention on the board (a fine-motor support)."},
+    "continuation": {"fill": "#9CC8F5", "badge_bg": "#DCFCE7", "badge_text": "#166534", "label": "Continuation", "desc": "Keeps the body moving after initiation — pacing, rhythm, endurance."},
+    "none":         {"fill": "#D1D5DB", "badge_bg": "#F3F4F6", "badge_text": "#374151", "label": "None",         "desc": "Not a real prompt (acknowledgement, narration, off-task)."},
+}
+
 # Descriptions for the RPM legend rendered under Method Breakdown.
 RPM_TYPE_DESCRIPTIONS = {
     "guided":        "Step-by-step prompts directing the speller to specific actions or spellings.",
@@ -45,12 +62,14 @@ RPM_TYPE_DESCRIPTIONS = {
 }
 
 # Union for visualizations that ignore method (donut, distribution bars, table badges).
-# S2C wins on overlapping keys ("reinforcement") since it's the more specific styling here.
-COLOR_MAP = {**RPM_TYPE_MAP, **S2C_TYPE_MAP}
+# S2C is spread last so it wins on type keys shared with Spellers/RPM
+# (initiation, continuation, none) — keeping the donut's shared-type colors stable.
+COLOR_MAP = {**RPM_TYPE_MAP, **SPELLERS_TYPE_MAP, **S2C_TYPE_MAP}
 
 METHOD_MAP = {
-    "s2c": {"bg": "#EEF2FF", "text": "#3730A3", "label": "S2C"},
-    "rpm": {"bg": "#E0F2FE", "text": "#0369A1", "label": "RPM"},
+    "s2c":      {"bg": "#EEF2FF", "text": "#3730A3", "label": "S2C"},
+    "rpm":      {"bg": "#E0F2FE", "text": "#0369A1", "label": "RPM"},
+    "spellers": {"bg": "#ECFDF5", "text": "#047857", "label": "Spellers"},
 }
 
 DIWAKAR_MAP = {
@@ -81,13 +100,16 @@ def render_report(results: list, file_name: str, trend_data_json: str = '{"sessi
     total = len(df)
 
     # Pad with zero counts so every known type appears in the donut/bar chart.
-    for k in list(RPM_TYPE_MAP.keys()) + list(S2C_TYPE_MAP.keys()):
+    for k in (list(RPM_TYPE_MAP.keys()) + list(S2C_TYPE_MAP.keys())
+              + list(SPELLERS_TYPE_MAP.keys())):
         counts.setdefault(k, 0)
 
     s2c_count = methods.get("s2c", 0)
     rpm_count = methods.get("rpm", 0)
-    s2c_pct   = round(s2c_count / total * 100) if total else 0
-    rpm_pct   = round(rpm_count / total * 100) if total else 0
+    spellers_count = methods.get("spellers", 0)
+    s2c_pct      = round(s2c_count / total * 100) if total else 0
+    rpm_pct      = round(rpm_count / total * 100) if total else 0
+    spellers_pct = round(spellers_count / total * 100) if total else 0
 
     chart_data = json.dumps({
         "counts":     counts,
@@ -125,9 +147,10 @@ def render_report(results: list, file_name: str, trend_data_json: str = '{"sessi
 
     s2c_table_rows = _method_type_rows("s2c", S2C_TYPE_MAP)
     rpm_table_rows = _method_type_rows("rpm", RPM_TYPE_MAP)
+    spellers_table_rows = _method_type_rows("spellers", SPELLERS_TYPE_MAP)
 
     def _count_block(title, css_class, items):
-        """Render one method's per-type counts (only types that appeared)."""
+        """Render one method's per-type counts as a labeled list."""
         rows = "".join(
             f'<li class="mtc-item"><span class="mtc-name">{he(label)}</span>'
             f'<span class="mtc-val">{n}</span></li>'
@@ -143,10 +166,26 @@ def render_report(results: list, file_name: str, trend_data_json: str = '{"sessi
         )
 
     # Per-type counts within each method (S2C / RPM by `type`, Diwakar by labels).
-    s2c_items = [(v["label"], int(((df["method"] == "s2c") & (df["type"] == k)).sum()))
-                 for k, v in S2C_TYPE_MAP.items()]
-    rpm_items = [(v["label"], int(((df["method"] == "rpm") & (df["type"] == k)).sum()))
-                 for k, v in RPM_TYPE_MAP.items()]
+    def _method_type_items(method_key, type_map):
+        """Count every type that appears for a method's prompts.
+
+        Shows the method's known types first (including zeros, in defined order),
+        then appends any other types that actually appeared — so prompts the
+        model tagged with an off-vocabulary type are still surfaced, not hidden.
+        """
+        has_cols = "method" in df.columns and "type" in df.columns
+        method_df = df[df["method"] == method_key] if has_cols else df.iloc[0:0]
+        type_counts = method_df["type"].value_counts().to_dict() if has_cols else {}
+        items = [(v["label"], type_counts.get(k, 0)) for k, v in type_map.items()]
+        for t, n in type_counts.items():
+            if t not in type_map:
+                label = COLOR_MAP.get(t, {}).get("label") or _humanize(t)
+                items.append((label, n))
+        return items
+
+    s2c_items = _method_type_items("s2c", S2C_TYPE_MAP)
+    rpm_items = _method_type_items("rpm", RPM_TYPE_MAP)
+    spellers_items = _method_type_items("spellers", SPELLERS_TYPE_MAP)
 
     diwakar_counts = {}
     for _, row in df.iterrows():
@@ -163,6 +202,7 @@ def render_report(results: list, file_name: str, trend_data_json: str = '{"sessi
     method_type_counts = (
         _count_block("S2C", "mtc-s2c", s2c_items)
         + _count_block("RPM", "mtc-rpm", rpm_items)
+        + _count_block("Spellers", "mtc-spl", spellers_items)
         + _count_block("Diwakar's Lab", "mtc-dwk", diwakar_items)
     )
 
@@ -182,6 +222,7 @@ def render_report(results: list, file_name: str, trend_data_json: str = '{"sessi
     rpm_legend_items = [(v["label"], RPM_TYPE_DESCRIPTIONS.get(k, "")) for k, v in RPM_TYPE_MAP.items()]
     s2c_legend = _legend_html(s2c_legend_items)
     rpm_legend = _legend_html(rpm_legend_items)
+    spellers_legend = _legend_html([(v["label"], v["desc"]) for v in SPELLERS_TYPE_MAP.values()])
 
     diwakar_rows = ""
     for _, row in df.iterrows():
@@ -217,21 +258,25 @@ def render_report(results: list, file_name: str, trend_data_json: str = '{"sessi
         .replace("{total_categories}", str(df["type"].nunique()))
         .replace("{s2c_count}",        str(s2c_count))
         .replace("{rpm_count}",        str(rpm_count))
+        .replace("{spellers_count}",   str(spellers_count))
         .replace("{s2c_pct}",          str(s2c_pct))
         .replace("{rpm_pct}",          str(rpm_pct))
-        .replace("{s2c_table_rows}",     s2c_table_rows)
-        .replace("{rpm_table_rows}",     rpm_table_rows)
-        .replace("{method_type_counts}", method_type_counts)
-        .replace("{diwakar_table_rows}", diwakar_rows)
+        .replace("{spellers_pct}",     str(spellers_pct))
+        .replace("{s2c_table_rows}",      s2c_table_rows)
+        .replace("{rpm_table_rows}",      rpm_table_rows)
+        .replace("{spellers_table_rows}", spellers_table_rows)
+        .replace("{method_type_counts}",  method_type_counts)
+        .replace("{diwakar_table_rows}",  diwakar_rows)
         .replace("{s2c_legend}",         s2c_legend)
         .replace("{rpm_legend}",         rpm_legend)
+        .replace("{spellers_legend}",    spellers_legend)
         .replace("{file_name}",        he(file_name))
         .replace("{report_date}",      date.today().strftime("%B %d, %Y"))
         .replace("{chart_data}",       chart_data)
         .replace("{trend_data}",       trend_data_json.replace("</script>", "<\\/script>"))
     )
 
-    components.html(html, height=980 + len(df) * 58, scrolling=True)
+    components.html(html, height=1060 + len(df) * 58, scrolling=True)
 
 
 # ── Session metadata inputs ──
@@ -250,20 +295,30 @@ with col3:
     )
 
 file   = st.file_uploader(label="Upload transcript (.srt)", type="srt")
+reanalyze = st.checkbox(
+    "Re-analyze & overwrite saved result (ignore cache)",
+    help="Re-run GPT even if this file was analyzed before, and overwrite the "
+         "saved session in place. Use this to upgrade an old session to the "
+         "latest classifier (e.g. to add Spellers Method labels).",
+)
 button = st.button(label="Analyze", type="primary", disabled=file is None)
 
 if button and file:
     results = None
+    cached = None
 
-    # Use cached classification if this file was already analyzed for this student
+    # Look up any existing saved session for this student + file.
     if student_id:
         try:
             cached = get_session_by_file(student_id, file.name)
-            if cached:
-                results = cached["classified_prompts"]
-                st.info("Loaded from saved session — skipped GPT.")
         except Exception:
-            pass
+            cached = None
+
+    # Reuse the saved classification unless the user asked to re-analyze.
+    if cached and not reanalyze:
+        results = cached["classified_prompts"]
+        st.info("Loaded from saved session — skipped GPT. "
+                "Tick “Re-analyze” to refresh it.")
 
     if results is None:
         try:
@@ -276,23 +331,29 @@ if button and file:
             st.stop()
 
         try:
-            with st.spinner("Saving session..."):
-                save_session(
-                    file.name,
-                    results,
-                    student_id=student_id or None,
-                    practitioner=practitioner or None,
-                    topic=topic or None,
-                )
+            if cached and cached.get("id") is not None:
+                with st.spinner("Updating saved session..."):
+                    update_session(cached["id"], results, topic=topic or None)
+                st.success("Saved session upgraded with the latest labels.")
+            else:
+                with st.spinner("Saving session..."):
+                    save_session(
+                        file.name,
+                        results,
+                        student_id=student_id or None,
+                        practitioner=practitioner or None,
+                        topic=topic or None,
+                    )
         except Exception as e:
             st.warning(f"Results could not be saved to the database: {e}")
 
     trend_data_json = '{"sessions":[]}'
     if student_id:
         try:
-            prior = get_student_sessions(student_id, limit=6)
+            prior = get_student_sessions(student_id, limit=12)
             if len(prior) >= 2:
-                trend_data_json = json.dumps(compute_trend_data(prior))
+                trend_data_json = json.dumps(
+                    compute_trend_data(prior, current_file=file.name))
         except Exception:
             pass
 
@@ -331,9 +392,13 @@ if history_student:
             else:
                 trend_data_json = '{"sessions":[]}'
                 try:
-                    prior = get_student_sessions(history_student, limit=6)
+                    prior = get_student_sessions(history_student, limit=12)
                     if len(prior) >= 2:
-                        trend_data_json = json.dumps(compute_trend_data(prior))
+                        trend_data_json = json.dumps(compute_trend_data(
+                            prior,
+                            current_file=selected.get("file_name"),
+                            current_date=selected.get("session_date"),
+                        ))
                 except Exception:
                     pass
                 render_report(results, selected.get("file_name", ""), trend_data_json)

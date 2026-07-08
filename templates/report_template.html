@@ -42,7 +42,7 @@ body {
 /* ── Stat cards ── */
 .stat-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 12px;
     margin-bottom: 20px;
 }
@@ -66,6 +66,7 @@ body {
 .stat-card.c-types  { --accent: #D1D5DB; }
 .stat-card.c-s2c    { --accent: #6366F1; }
 .stat-card.c-rpm    { --accent: #0EA5E9; }
+.stat-card.c-spl    { --accent: #10B981; }
 .stat-num {
     font-size: 42px;
     font-weight: 700;
@@ -165,7 +166,7 @@ body {
     margin-bottom: 14px;
 }
 .mtc-wrap .panel-title { margin: -22px -26px 18px; }
-.mtc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.mtc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .mtc-group { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 10px; overflow: hidden; }
 .mtc-head {
     font-size: 11px; font-weight: 700; letter-spacing: 0.6px;
@@ -173,6 +174,7 @@ body {
 }
 .mtc-head.mtc-s2c { background: #EEF2FF; color: #3730A3; }
 .mtc-head.mtc-rpm { background: #E0F2FE; color: #0369A1; }
+.mtc-head.mtc-spl { background: #ECFDF5; color: #047857; }
 .mtc-head.mtc-dwk { background: #F3E8FF; color: #581C87; }
 .mtc-list { list-style: none; margin: 0; padding: 6px 12px; }
 .mtc-item {
@@ -193,15 +195,18 @@ body {
 }
 .mc-s2c { background: linear-gradient(120deg, #EEF2FF 0%, #E0E7FF 100%); border: 1px solid #C7D2FE; }
 .mc-rpm { background: linear-gradient(120deg, #E0F2FE 0%, #BAE6FD 100%); border: 1px solid #7DD3FC; }
+.mc-spl { background: linear-gradient(120deg, #ECFDF5 0%, #D1FAE5 100%); border: 1px solid #A7F3D0; }
 .mc-icon { font-size: 28px; line-height: 1; }
 .mc-info { flex: 1; }
 .mc-tag  { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; }
 .mc-s2c .mc-tag  { color: #4338CA; }
 .mc-rpm .mc-tag  { color: #0369A1; }
+.mc-spl .mc-tag  { color: #047857; }
 .mc-name { font-size: 11px; color: #6B7280; margin-top: 2px; }
 .mc-count { font-size: 36px; font-weight: 700; letter-spacing: -1.5px; line-height: 1; }
 .mc-s2c .mc-count { color: #3730A3; }
 .mc-rpm .mc-count { color: #0C4A6E; }
+.mc-spl .mc-count { color: #065F46; }
 .mc-pct  { font-size: 11px; color: #9CA3AF; margin-top: 3px; }
 
 .split-bar {
@@ -210,6 +215,7 @@ body {
 }
 .sb-s2c { background: #6366F1; }
 .sb-rpm { background: #0EA5E9; }
+.sb-spl { background: #10B981; }
 .split-legend { display: flex; gap: 18px; font-size: 12px; color: #9CA3AF; }
 .sl-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; vertical-align: middle; }
 
@@ -275,6 +281,7 @@ body {
 .fbtn.active       { background: #111827; color: #fff; border-color: #111827; }
 .fbtn.fs2c.active  { background: #6366F1; color: #fff; border-color: #6366F1; }
 .fbtn.frpm.active  { background: #0EA5E9; color: #fff; border-color: #0EA5E9; }
+.fbtn.fspl.active  { background: #10B981; color: #fff; border-color: #10B981; }
 .fbtn.fdwk.active  { background: #9333EA; color: #fff; border-color: #9333EA; }
 
 table { width: 100%; border-collapse: collapse; }
@@ -348,6 +355,7 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
 }
 .ml-title.ml-s2c { background: #EEF2FF; color: #3730A3; }
 .ml-title.ml-rpm { background: #E0F2FE; color: #0369A1; }
+.ml-title.ml-spl { background: #ECFDF5; color: #047857; }
 .ml-title.ml-dwk { background: #F3E8FF; color: #581C87; }
 .ml-list {
     list-style: none;
@@ -397,6 +405,10 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
         <div class="stat-num" data-target="{rpm_count}">0</div>
         <div class="stat-lbl">RPM prompts</div>
     </div>
+    <div class="stat-card c-spl">
+        <div class="stat-num" data-target="{spellers_count}">0</div>
+        <div class="stat-lbl">Spellers prompts</div>
+    </div>
 </div>
 
 <!-- ── Two-column panels ── -->
@@ -444,14 +456,27 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
                     <div class="mc-pct">{rpm_pct}% of session</div>
                 </div>
             </div>
+            <div class="method-card mc-spl">
+                <div class="mc-icon">🔤</div>
+                <div class="mc-info">
+                    <div class="mc-tag">Spellers</div>
+                    <div class="mc-name">Spellers Method</div>
+                </div>
+                <div>
+                    <div class="mc-count">{spellers_count}</div>
+                    <div class="mc-pct">{spellers_pct}% of session</div>
+                </div>
+            </div>
         </div>
         <div class="split-bar">
             <div class="sb-s2c" id="sbS2C"></div>
             <div class="sb-rpm" id="sbRPM"></div>
+            <div class="sb-spl" id="sbSPL"></div>
         </div>
         <div class="split-legend">
             <span><span class="sl-dot" style="background:#6366F1"></span>S2C · {s2c_pct}%</span>
             <span><span class="sl-dot" style="background:#0EA5E9"></span>RPM · {rpm_pct}%</span>
+            <span><span class="sl-dot" style="background:#10B981"></span>Spellers · {spellers_pct}%</span>
         </div>
 
         <div class="ml-wrap">
@@ -462,6 +487,10 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
             <div class="ml-block">
                 <div class="ml-title ml-rpm">RPM</div>
                 <ol class="ml-list">{rpm_legend}</ol>
+            </div>
+            <div class="ml-block">
+                <div class="ml-title ml-spl">Spellers</div>
+                <ol class="ml-list">{spellers_legend}</ol>
             </div>
         </div>
     </div>
@@ -486,7 +515,7 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
 <div id="trendSection" style="display:none" class="trend-panel">
     <div class="panel-title">
         Prompt type trends — prior sessions
-        <span class="timeline-sub">— stacked bars show how the prompt mix has shifted over time</span>
+        <span class="timeline-sub">— the current session is always shown; pick others to compare against it</span>
     </div>
     <canvas id="trendCanvas" height="220" style="width:100%;display:block;margin-top:14px"></canvas>
     <div class="trend-legend" id="trendLegend"></div>
@@ -499,6 +528,7 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
         <div class="filters">
             <button class="fbtn fs2c active" data-filter="s2c">S2C</button>
             <button class="fbtn frpm"        data-filter="rpm">RPM</button>
+            <button class="fbtn fspl"        data-filter="spellers">Spellers</button>
             <button class="fbtn fdwk"        data-filter="diwakar">Diwakar's</button>
         </div>
     </div>
@@ -522,6 +552,17 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
                 </tr>
             </thead>
             <tbody>{rpm_table_rows}</tbody>
+        </table>
+    </div>
+    <div class="mt-table-wrap" data-method="spellers">
+        <table class="mt-table">
+            <thead>
+                <tr>
+                    <th class="mt-type-col">Type</th>
+                    <th>Prompt</th>
+                </tr>
+            </thead>
+            <tbody>{spellers_table_rows}</tbody>
         </table>
     </div>
     <div class="mt-table-wrap" data-method="diwakar">
@@ -556,6 +597,7 @@ document.querySelectorAll('[data-target]').forEach(el => {
 /* ── Split bar ── */
 document.getElementById('sbS2C').style.width = '{s2c_pct}%';
 document.getElementById('sbRPM').style.width = '{rpm_pct}%';
+document.getElementById('sbSPL').style.width = '{spellers_pct}%';
 
 /* Capitalize first letter and replace underscores for any label that
    doesn't have a friendly version in DATA.typeLabels. */
@@ -638,75 +680,297 @@ const humanize = s => (s || '').replace(/_/g, ' ').replace(/^./, c => c.toUpperC
     });
 })();
 
-/* ── Cross-session trend chart ── */
+/* ── Cross-session trend chart (line chart) ── */
 (function() {
-    const sessions = TREND_DATA.sessions;
-    if (!sessions || sessions.length < 2) return;
+    const allSessions = TREND_DATA.sessions;
+    if (!allSessions || allSessions.length < 2) return;
 
     document.getElementById('trendSection').style.display = 'block';
 
     const canvas = document.getElementById('trendCanvas');
     const panel  = canvas.closest('.trend-panel');
     const W = panel.clientWidth - 52;
+    const H = 300;
     canvas.width = W;
-    const H = 220;
-
+    canvas.height = H;
+    canvas.style.height = H + 'px';
     const ctx = canvas.getContext('2d');
-    const typeSet = new Set();
-    sessions.forEach(s => Object.keys(s.pcts || {}).forEach(t => typeSet.add(t)));
-    const TYPES = Array.from(typeSet);
-    const N = sessions.length;
-    const leftPad   = 10;
-    const bottomPad = 46;
-    const chartH = H - bottomPad;
-    const groupW = (W - leftPad) / N;
-    const barW   = Math.min(56, groupW * 0.6);
+    const legend = document.getElementById('trendLegend');
 
-    sessions.forEach((session, i) => {
-        const xCenter = leftPad + (i + 0.5) * groupW;
-        const x = xCenter - barW / 2;
-        let stackY = chartH;
+    const SESSION_COLORS = ['#6366F1', '#0EA5E9', '#F59E0B', '#10B981', '#EC4899', '#8B5CF6', '#EF4444'];
+    const sColor = k => SESSION_COLORS[k % SESSION_COLORS.length];
 
-        TYPES.forEach(type => {
-            const pct = session.pcts[type] || 0;
-            if (pct === 0) return;
-            const segH = (pct / 100) * chartH;
-            stackY -= segH;
-            ctx.fillStyle = DATA.colorMap[type] || '#ccc';
-            ctx.fillRect(x, stackY, barW, segH);
+    const leftPad = 40, rightPad = 24, topPad = 18, bottomPad = 62;
+    const xInset = 38;
+    const plotW  = W - leftPad - rightPad;
+    const chartH = H - topPad - bottomPad;
+
+    const escTxt = x => (x || '').replace(/[&<>]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[c]));
+    const labelOf = t => DATA.typeLabels[t] || humanize(t);
+
+    // Hover state — refreshed on every render so the (once-attached) listeners stay valid.
+    let points = [];
+    let lines = {};
+
+    // Draw the chart for a chosen set of sessions (array of original indices).
+    function render(indices) {
+        const visible = indices.map(i => allSessions[i]);
+
+        ctx.clearRect(0, 0, W, H);
+        legend.innerHTML = '';
+        points = [];
+
+        // Prompt types shown = those that appear in any visible session
+        const typeSet = new Set();
+        visible.forEach(s => Object.keys(s.pcts || {}).forEach(t => typeSet.add(t)));
+        const TYPES = Array.from(typeSet).filter(t => visible.some(s => (s.pcts[t] || 0) > 0));
+        const M = TYPES.length;
+
+        let maxPct = 0;
+        visible.forEach(s => TYPES.forEach(t => { maxPct = Math.max(maxPct, s.pcts[t] || 0); }));
+        const niceMax = Math.max(10, Math.ceil(maxPct / 10) * 10);
+
+        const xAt = j => leftPad + xInset + (M <= 1 ? (plotW - 2 * xInset) / 2 : (plotW - 2 * xInset) * (j / (M - 1)));
+        const yAt = p => topPad + chartH * (1 - p / niceMax);
+
+        // Gridlines + y-axis percentage labels
+        const GRID = 4;
+        ctx.textBaseline = 'middle';
+        ctx.font = '10px Inter, sans-serif';
+        for (let g = 0; g <= GRID; g++) {
+            const val = (niceMax / GRID) * g;
+            const y = yAt(val);
+            ctx.strokeStyle = '#EEF0F2';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(leftPad, y);
+            ctx.lineTo(leftPad + plotW, y);
+            ctx.stroke();
+            ctx.fillStyle = '#C4C4C0';
+            ctx.textAlign = 'right';
+            ctx.fillText(Math.round(val) + '%', leftPad - 6, y);
+        }
+
+        // Light vertical guide at each prompt type
+        TYPES.forEach((t, j) => {
+            const x = xAt(j);
+            ctx.strokeStyle = '#EFF1F3';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x, topPad);
+            ctx.lineTo(x, topPad + chartH);
+            ctx.stroke();
         });
 
-        // Date label
-        ctx.fillStyle = '#9CA3AF';
-        ctx.font = '10px Inter, sans-serif';
+        // One line (plus dots) per visible session — colored/numbered by original order
+        visible.forEach((s, i) => {
+            const origIdx = indices[i];
+            const color = sColor(origIdx);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2.5;
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            TYPES.forEach((t, j) => {
+                const x = xAt(j), y = yAt(s.pcts[t] || 0);
+                if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            TYPES.forEach((t, j) => {
+                const pct = s.pcts[t] || 0;
+                const x = xAt(j), y = yAt(pct);
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                points.push({ x, y, sessionIdx: origIdx, color, pct, type: t, label: labelOf(t) });
+            });
+        });
+
+        // Value labels at each dot, stacked within a column so sessions don't overlap
         ctx.textAlign = 'center';
-        const datePart = (session.label || '').slice(5);   // MM-DD
-        ctx.fillText(datePart, xCenter, chartH + 16);
+        ctx.textBaseline = 'alphabetic';
+        ctx.font = '600 9px Inter, sans-serif';
+        TYPES.forEach((t) => {
+            const col = points.filter(p => p.type === t && p.pct > 0).sort((a, b) => a.y - b.y);
+            col.forEach((p, idx) => {
+                ctx.fillStyle = p.color;
+                ctx.fillText(p.pct + '%', p.x, idx === 0 ? p.y - 7 : p.y + 15);
+            });
+        });
 
-        // Topic label (truncated)
-        const topicRaw = session.topic || '';
-        const topicLabel = topicRaw.length > 14 ? topicRaw.slice(0, 13) + '…' : topicRaw;
-        ctx.fillStyle = '#D1D5DB';
-        ctx.font = '9px Inter, sans-serif';
-        ctx.fillText(topicLabel, xCenter, chartH + 28);
+        // X-axis labels = prompt types (angled when there are many)
+        ctx.fillStyle = '#6B7280';
+        ctx.font = '10px Inter, sans-serif';
+        const angled = M > 5;
+        TYPES.forEach((t, j) => {
+            const x = xAt(j);
+            const yLbl = topPad + chartH + 16;
+            const name = labelOf(t);
+            if (angled) {
+                ctx.save();
+                ctx.translate(x, yLbl);
+                ctx.rotate(-Math.PI / 7);
+                ctx.textAlign = 'right';
+                ctx.fillText(name, 0, 0);
+                ctx.restore();
+            } else {
+                ctx.textAlign = 'center';
+                ctx.fillText(name, x, yLbl);
+            }
+        });
 
-        // Total count
-        ctx.fillStyle = '#9CA3AF';
-        ctx.font = '9px Inter, sans-serif';
-        ctx.fillText(session.total + ' prompts', xCenter, chartH + 40);
+        // Legend — one entry per visible session
+        visible.forEach((s, i) => {
+            const origIdx = indices[i];
+            const meta = [escTxt(s.topic || ''), (s.label || '').slice(5), s.total + ' prompts']
+                .filter(Boolean).join(' · ');
+            const item = document.createElement('div');
+            item.className = 'trend-legend-item';
+            item.innerHTML =
+                '<div class="trend-legend-swatch" style="background:' + sColor(origIdx) + '"></div>' +
+                '<b>Session ' + (origIdx + 1) + '</b>&nbsp;— ' + meta;
+            legend.appendChild(item);
+        });
+
+        // Rebuild per-session polylines for hover hit-testing
+        lines = {};
+        points.forEach(p => { (lines[p.sessionIdx] = lines[p.sessionIdx] || []).push(p); });
+    }
+
+    // ── Session chips: the current session is pinned; pick others to compare ──
+    const maxN = allSessions.length;
+    // The session this report is for — always shown. Falls back to the most recent.
+    const anchorIdx = (typeof TREND_DATA.currentIndex === 'number')
+        ? TREND_DATA.currentIndex : maxN - 1;
+    const selected = new Set([anchorIdx]);        // start with just the current session
+    const selectedSorted = () => Array.from(selected).sort((a, b) => a - b);
+
+    if (maxN >= 2) {
+        const controls = document.createElement('div');
+        controls.style.cssText = 'display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:12px 0 2px;font-size:11px;color:#9CA3AF;';
+        const lbl = document.createElement('span');
+        lbl.textContent = 'Compare with:';
+        controls.appendChild(lbl);
+
+        const chips = [];
+        function refreshChips() {
+            chips.forEach((chip, i) => {
+                const on = selected.has(i);
+                chip.style.background = on ? sColor(i) : '#fff';
+                chip.style.color = on ? '#fff' : '#9CA3AF';
+                chip.style.borderColor = on ? sColor(i) : '#E5E7EB';
+            });
+        }
+        allSessions.forEach((s, i) => {
+            const isAnchor = i === anchorIdx;
+            const chip = document.createElement('button');
+            chip.textContent = 'Session ' + (i + 1) + (isAnchor ? ' (current)' : '');
+            chip.title = [s.topic || '', (s.label || '').slice(5)].filter(Boolean).join(' · ');
+            chip.style.cssText = 'padding:3px 11px;border-radius:999px;border:1px solid #E5E7EB;' +
+                'background:#fff;color:#9CA3AF;font:inherit;cursor:' + (isAnchor ? 'default' : 'pointer') + ';';
+            chip.addEventListener('click', () => {
+                if (isAnchor) return;                 // current session is always shown
+                if (selected.has(i)) selected.delete(i); else selected.add(i);
+                refreshChips();
+                render(selectedSorted());
+            });
+            controls.appendChild(chip);
+            chips.push(chip);
+        });
+
+        const allBtn = document.createElement('button');
+        allBtn.textContent = 'All';
+        allBtn.style.cssText = 'padding:3px 11px;border-radius:6px;border:1px solid #E5E7EB;background:#fff;color:#6B7280;cursor:pointer;font:inherit;margin-left:4px;';
+        allBtn.addEventListener('click', () => {
+            allSessions.forEach((_, i) => selected.add(i));
+            refreshChips();
+            render(selectedSorted());
+        });
+        controls.appendChild(allBtn);
+
+        canvas.parentNode.insertBefore(controls, canvas);
+        refreshChips();
+    }
+
+    // ── Hover tooltip (listeners attached once; they read the live points/lines) ──
+    const esc = s => (s || '').replace(/[&<>"]/g, c =>
+        ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+
+    let tip = document.getElementById('trendTip');
+    if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'trendTip';
+        tip.style.cssText =
+            'position:fixed;pointer-events:none;z-index:1000;display:none;' +
+            'background:#111827;color:#fff;font:11px Inter,sans-serif;line-height:1.5;' +
+            'padding:7px 10px;border-radius:7px;box-shadow:0 4px 14px rgba(0,0,0,0.22);white-space:nowrap;';
+        document.body.appendChild(tip);
+    }
+
+    const segDist = (px, py, a, b) => {
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const len2 = dx * dx + dy * dy;
+        let t = len2 ? ((px - a.x) * dx + (py - a.y) * dy) / len2 : 0;
+        t = Math.max(0, Math.min(1, t));
+        return { d: Math.hypot(px - (a.x + t * dx), py - (a.y + t * dy)), t };
+    };
+
+    const DOT_R = 12, LINE_R = 8;
+    canvas.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+        let best = null, bestD = DOT_R;
+        points.forEach(p => {
+            const d = Math.hypot(p.x - mx, p.y - my);
+            if (d < bestD) { bestD = d; best = p; }
+        });
+        if (!best) {
+            let segBest = LINE_R;
+            Object.values(lines).forEach(pts => {
+                for (let i = 0; i < pts.length - 1; i++) {
+                    const { d, t } = segDist(mx, my, pts[i], pts[i + 1]);
+                    if (d < segBest) {
+                        segBest = d;
+                        best = t < 0.5 ? pts[i] : pts[i + 1];   // snap to nearer session
+                    }
+                }
+            });
+        }
+
+        if (best) {
+            const s = allSessions[best.sessionIdx];
+            const count = (s.counts && s.counts[best.type] != null)
+                ? s.counts[best.type]
+                : Math.round(best.pct / 100 * s.total);
+            const meta = ['Session ' + (best.sessionIdx + 1), s.topic ? esc(s.topic) : '', esc(s.label || '')]
+                .filter(Boolean).join(' · ');
+            tip.innerHTML =
+                '<div style="font-weight:600">' +
+                    '<span style="display:inline-block;width:8px;height:8px;border-radius:2px;' +
+                    'background:' + best.color + ';margin-right:6px"></span>' +
+                    esc(best.label) + ' — ' + best.pct + '%</div>' +
+                (meta ? '<div style="color:#D1D5DB">' + meta + '</div>' : '') +
+                '<div style="color:#D1D5DB">' + count + ' of ' + s.total + ' prompts</div>';
+            tip.style.display = 'block';
+            tip.style.left = (e.clientX + 14) + 'px';
+            tip.style.top  = (e.clientY + 14) + 'px';
+            canvas.style.cursor = 'pointer';
+        } else {
+            tip.style.display = 'none';
+            canvas.style.cursor = 'default';
+        }
+    });
+    canvas.addEventListener('mouseleave', () => {
+        tip.style.display = 'none';
+        canvas.style.cursor = 'default';
     });
 
-    // Legend
-    const legend = document.getElementById('trendLegend');
-    TYPES.forEach(type => {
-        if (!DATA.typeLabels[type]) return;
-        const item = document.createElement('div');
-        item.className = 'trend-legend-item';
-        item.innerHTML =
-            '<div class="trend-legend-swatch" style="background:' + (DATA.colorMap[type] || '#ccc') + '"></div>' +
-            DATA.typeLabels[type];
-        legend.appendChild(item);
-    });
+    render(selectedSorted());
 })();
 
 /* ── Method tabs (Classified Prompts) ── */
@@ -718,7 +982,7 @@ document.querySelectorAll('.fbtn').forEach(btn => {
         document.querySelectorAll('.mt-table-wrap').forEach(w => {
             w.classList.toggle('active', w.dataset.method === f);
         });
-        const isMethod = f === 's2c' || f === 'rpm';
+        const isMethod = f === 's2c' || f === 'rpm' || f === 'spellers';
         document.querySelectorAll('.t-dot').forEach(dot => {
             dot.style.opacity = !isMethod || dot.dataset.method === f ? '0.82' : '0.15';
         });

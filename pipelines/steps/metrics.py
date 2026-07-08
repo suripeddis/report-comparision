@@ -29,7 +29,8 @@ def results_to_df(results):
     return pd.DataFrame(results)
 
 
-def compute_trend_data(sessions: list) -> dict:
+def compute_trend_data(sessions: list, current_file: str = None,
+                       current_date: str = None) -> dict:
     """Build per-session prompt-type distributions for the cross-session trend chart.
 
     Returns a dict with a 'sessions' list, each entry containing:
@@ -38,8 +39,13 @@ def compute_trend_data(sessions: list) -> dict:
       total  — total prompt count
       counts — {type: count, ...}
       pcts   — {type: integer_percentage, ...}
+
+    If current_file (and optionally current_date) is given, the returned dict
+    also includes 'currentIndex': the position in the sessions list of the
+    session being viewed, so the chart can pin it as the always-shown anchor.
     """
     rows = []
+    current_index = None
     for s in sessions:
         results = s.get("classified_prompts", [])
         if not results:
@@ -47,6 +53,9 @@ def compute_trend_data(sessions: list) -> dict:
         df = pd.DataFrame(results)
         total = len(df)
         raw_counts = df["type"].value_counts().to_dict()
+        if current_file is not None and s.get("file_name") == current_file \
+                and (current_date is None or s.get("session_date") == current_date):
+            current_index = len(rows)   # index this row will take among the kept rows
         rows.append({
             "label": (s.get("session_date") or "")[:10],
             "topic": s.get("topic") or s.get("file_name", ""),
@@ -57,4 +66,7 @@ def compute_trend_data(sessions: list) -> dict:
                 for t in ALL_TYPES
             },
         })
-    return {"sessions": rows}
+    out = {"sessions": rows}
+    if current_index is not None:
+        out["currentIndex"] = current_index
+    return out

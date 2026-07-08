@@ -1,10 +1,10 @@
-# AAC Prompt Classifier — Project Specification
+# AAC Prompt Classifier — Technical Spec
 
-> A Streamlit web application that ingests AAC (Augmentative and Alternative
-> Communication) letterboarding therapy session transcripts, classifies every
-> facilitator prompt along three labeling dimensions using an OpenAI GPT model,
-> persists each session to Supabase, and renders an interactive, multi-section
-> HTML analytics report including cross-session trends.
+> A Streamlit web app that reads an AAC (Augmentative and Alternative
+> Communication) therapy session transcript, uses an OpenAI model to label every
+> prompt the facilitator gave (in three ways), saves each session to a Supabase
+> database, and builds an interactive HTML report — including a chart that shows
+> how a student's prompt mix changes across sessions.
 
 ---
 
@@ -12,182 +12,184 @@
 
 ### 1.1 The problem
 
-In AAC letterboarding therapy, a facilitator (practitioner) supports a
-non-speaking or minimally-speaking student in communicating by pointing to
-letters on a board. The *kind* of prompting a facilitator uses matters
-clinically: too much directive prompting can call into question the
-independence/authorship of the student's output, while the right balance of
-open-ended and regulating prompts supports genuine communication.
+In AAC letterboarding therapy, a facilitator helps a non-speaking or
+minimally-speaking student communicate by pointing to letters on a board. The
+*kind* of prompting the facilitator uses matters: too much directive prompting
+can raise questions about whether the words are really the student's own, while
+a good balance of open questions and calming/regulating prompts supports real
+communication.
 
-Reviewing a session by hand — listening to a recording, transcribing it, and
-tallying what kinds of prompts were used — is slow and subjective. This project
-automates that analysis.
+Doing this review by hand — listening to a recording, writing it down, and
+counting the kinds of prompts — is slow and easy to disagree on. This project
+does that counting automatically and the same way every time.
 
 ### 1.2 What the app does
 
-1. A user uploads an `.srt` transcript of one therapy session.
-2. The app extracts the spoken text and sends it to an OpenAI GPT model with a
-   detailed classification prompt.
-3. The model returns, for **every facilitator utterance**, a structured label
-   set across **three independent dimensions** (see §4).
-4. The app aggregates those labels into counts and renders a polished HTML
-   report: stat cards, a donut chart, distribution bars, a per-method count
-   breakdown, a session timeline, a cross-session trend chart, and tabbed
-   prompt tables.
-5. The classified session is saved to a Supabase table so it can be reloaded
-   later and compared across time for the same student.
+1. A user uploads an `.srt` transcript of one session.
+2. The app pulls out the spoken text and sends it to an OpenAI model along with a
+   detailed set of labeling instructions.
+3. The model returns, for **every prompt the facilitator gave**, a set of labels
+   across **three separate questions** (see §4).
+4. The app counts up those labels and builds an HTML report: summary cards, a
+   donut chart, bars, a per-method count breakdown, a session timeline, a
+   cross-session line chart, and tables of every prompt.
+5. The labeled session is saved to a Supabase table so it can be reopened later
+   and compared over time for the same student.
 
-### 1.3 The two methodologies being compared
+### 1.3 The two methods being compared
 
-The project name "report-comparison" reflects its core analytical goal:
-comparing how prompts map onto two competing AAC methodologies.
+The project's goal is to compare how prompts line up with two well-known AAC
+methods:
 
-| Method | Full name | Orientation |
+| Method | Full name | Focus |
 |---|---|---|
-| **S2C** | Spelling to Communicate | Motor learning & regulation — guiding the *motor act* of pointing |
-| **RPM** | Rapid Prompting Method | Academic engagement & content — emphasizing the *cognitive content* of the response |
+| **S2C** | Spelling to Communicate | The *physical act* of pointing — movement and staying regulated |
+| **RPM** | Rapid Prompting Method | The *content* of the answer — questions, choices, ideas |
 
-A third, independent labeling scheme — **"Diwakar's Lab" prompt types** — is a
-12-label, multi-label vocabulary used by the associated research lab to tag
-prompts more granularly (e.g. `encouragement`, `dictation`, `gaze_cue`).
+There is also a third, separate set of labels — the **"Diwakar's Lab" types** —
+a list of 12 more detailed tags the research lab uses (for example
+`encouragement`, `dictation`, `gaze_cue`). A prompt can have more than one of
+these at once.
 
 ---
 
-## 2. Project Evolution (how it was built)
+## 2. How the project was built
 
-The git history records the project's progression from a classic ML approach to
-an LLM-based one:
+The git history shows the project moving from a trained machine-learning model
+to an AI language model:
 
-| Commit | Milestone |
+| Commit | Step |
 |---|---|
 | `2712d77` | Initial commit |
 | `3ee60d7` | Added `main.py` |
-| `76f9bae` | Created the UI; extracted "teach / ask / spell" logic |
+| `76f9bae` | Built the UI; pulled out the "teach / ask / spell" logic |
 | `6384bc0` | Classified "ask" prompts |
-| `96d1c9f` | Removed `.env` from tracking, added to `.gitignore` |
-| `a337a7c` | Adding to classifier |
-| `9182889` | Added graphs to analyze types and counts of each prompt type |
+| `96d1c9f` | Stopped tracking `.env`, added it to `.gitignore` |
+| `a337a7c` | More work on the classifier |
+| `9182889` | Added graphs for prompt types and counts |
 | `7edd4a4` | Fixed import issues |
-| `8480161` | **Switched to OpenAI's API to classify prompt types** |
+| `8480161` | **Switched to OpenAI's API to classify prompts** |
 | `770a2f6` | Added `requirements.txt` |
 
-### 2.1 Phase 1 — Classical ML (now archived)
+### 2.1 Phase 1 — a trained model (now archived)
 
-The first approach trained a **TF-IDF + Logistic Regression** classifier on
-labeled prompt examples. This code now lives under [ml/archive/](ml/archive/):
+The first version trained a **TF-IDF + Logistic Regression** classifier on
+example prompts. (TF-IDF turns text into numbers based on which words appear;
+logistic regression then predicts a label from those numbers.) That code now
+lives in [ml/archive/](ml/archive/):
 
 - [ml/archive/prompt_train.py](ml/archive/prompt_train.py) — trains on
   [data/prompts.csv](data/prompts.csv) (`text`, `label` columns; ~337 rows).
 - [ml/archive/train.py](ml/archive/train.py) — trains on
-  [data/prompt_examples_120 (1).csv](data/) using the richer
-  `functional_type` label (Choice / Clarification / Guided / etc.).
+  [data/prompt_examples_120 (1).csv](data/) using the richer `functional_type`
+  label (Choice / Clarification / Guided / etc.).
 
-Both scripts follow the same pipeline:
+Both scripts do the same steps:
 
 ```
-load CSV → train/test split (80/20) → TF-IDF vectorize (1–2 grams, min_df=2)
-        → LogisticRegression → evaluate (accuracy, classification report,
-          confusion matrix) → dump model + vectorizer to .pkl → log mistakes
+read CSV → split into train/test (80/20) → turn text into numbers (TF-IDF)
+        → train Logistic Regression → check accuracy (report + confusion matrix)
+        → save the model + vectorizer as .pkl → log the wrong guesses
 ```
 
-Artifacts produced (git-ignored, kept locally): `ml/*.pkl`, plus the split CSVs
-`train_features.csv`, `train_target.csv`, `test_features.csv`,
-`test_target.csv`, and `model_mistakes.csv` for error analysis.
+Files produced (kept locally, not in git): `ml/*.pkl`, the split CSVs
+(`train_features.csv`, etc.), and `model_mistakes.csv` for studying errors.
 
-**Why it was replaced:** A bag-of-words logistic model classifies a single,
-flat label and cannot reason about context (e.g. whether "What do you see?" is
-*open-ended* or a *clarification* depends on what the student just did). It also
-could not produce the three independent label dimensions the lab wanted. The
-project moved to an LLM, which classifies with full transcript context and
-emits structured multi-dimensional output in one call.
+**Why it was replaced:** this kind of model gives one flat label and can't use
+context — for example, whether "What do you see?" is *open-ended* or a
+*clarification* depends on what the student just did, which the model can't see.
+It also can't produce the three separate labels the lab wanted. An AI language
+model can read the whole transcript for context and return all three labels in
+one go.
 
-### 2.2 Phase 2 — LLM classification (current)
+### 2.2 Phase 2 — AI language model (current)
 
-The current system replaces the trained model with a single OpenAI Chat
-Completions call driven by a long, rules-based system prompt
-([pipelines/steps/classifier.py](pipelines/steps/classifier.py)). The ML
-artifacts are retained for reference/comparison but are not on the runtime path.
+The current system replaces the trained model with one OpenAI call driven by a
+long, rules-based instruction prompt
+([pipelines/steps/classifier.py](pipelines/steps/classifier.py)). The old
+ML files are kept for reference but are not used when the app runs.
 
 ---
 
-## 3. Tools, Libraries & Tech Stack
+## 3. Tools & Tech Stack
 
-| Layer | Tool | Role |
+| Layer | Tool | What it does |
 |---|---|---|
-| Language | **Python 3.11+** (venv uses 3.12) | Everything |
-| Web UI | **Streamlit** | Single-page app, file upload, inputs, embedded HTML report |
-| LLM | **OpenAI** Python SDK (`gpt-4.1-mini`) | Three-dimensional prompt classification |
-| Config | **python-dotenv** | Loads API keys from `.env` |
-| Data | **pandas** | Aggregation, value counts, DataFrame shaping |
-| Persistence | **Supabase** (`supabase-py`) | Stores classified sessions in a Postgres `sessions` table |
-| Report | Hand-written **HTML/CSS + vanilla JS** (Canvas API) | Donut, bars, timeline, stacked trend chart — no chart library |
-| Classic ML (archived) | **scikit-learn** | TF-IDF + LogisticRegression (Phase 1) |
-| Testing | **pytest** | Unit tests for ingest + metrics |
-| Lint | **flake8** | Style (max line length 100) |
-| Build tasks | **Makefile** | `install` / `run` / `test` / `lint` |
-| VCS | **git** | Version control |
+| Language | **Python 3.11+** | Everything |
+| Web UI | **Streamlit** | Single-page app: inputs, file upload, embedded report |
+| AI model | **OpenAI** Python SDK (`gpt-4.1-mini`) | Labels each prompt three ways |
+| Config | **python-dotenv** | Reads keys from `.env` when running locally |
+| Data | **pandas** | Counting and table shaping |
+| Database | **Supabase** (`supabase-py`) | Saves labeled sessions in a Postgres `sessions` table |
+| Report | Hand-written **HTML/CSS + plain JS** (Canvas) | Donut, bars, timeline, line chart — no chart library |
+| Old ML (archived) | **scikit-learn** | TF-IDF + Logistic Regression (Phase 1) |
+| Testing | **pytest** | Tests for transcript reading + counting |
+| Lint | **flake8** | Style check (max line length 100) |
+| Tasks | **Makefile** | `install` / `run` / `test` / `lint` |
+| Version control | **git** | History |
+| Hosting | **Streamlit Community Cloud** | Runs the deployed app from GitHub |
 
-`requirements.txt` (runtime): `streamlit`, `openai`, `python-dotenv`, `pandas`,
-`supabase`.
+`requirements.txt` (what the app needs to run): `streamlit`, `openai`,
+`python-dotenv`, `pandas`, `supabase`.
 
 ---
 
-## 4. The Classification Schema (three dimensions)
+## 4. How prompts are labeled (three questions)
 
-Every facilitator utterance is labeled along three independent dimensions. The
-model is instructed to **first pick a method, then pick a type from that
-method's vocabulary**, and separately apply any number of Diwakar labels.
+Every facilitator prompt gets labeled by answering three separate questions. The
+model is told to **first pick a method, then pick a type from that method's
+list**, and separately add any number of Diwakar labels.
 
-### Dimension 1 — Method (single label)
+### Question 1 — Method (pick one)
 
 | Value | Meaning |
 |---|---|
-| `s2c` | Motor/regulation-oriented prompting (Spelling to Communicate) |
-| `rpm` | Content/academic-oriented prompting (Rapid Prompting Method) |
+| `s2c` | About movement/regulation (Spelling to Communicate) |
+| `rpm` | About content/academics (Rapid Prompting Method) |
 
-Decision rule: if a prompt addresses both motor process and content, classify
-by *primary intent* — motor → `s2c`, content → `rpm`.
+Rule: if a prompt is about both movement and content, label it by its **main
+point** — movement → `s2c`, content → `rpm`.
 
-### Dimension 2 — Prompt Type (single label, method-dependent vocabulary)
+### Question 2 — Prompt type (pick one; the list depends on the method)
 
 **If `method = s2c`** — one of:
 
 | Type | Meaning |
 |---|---|
-| `initiation` | Verbal cue to start movement ("Let's begin.") |
-| `continuation` | Verbal cue to continue movement ("Keep going.") |
-| `gesture` | Physical/pointing cue |
-| `direction` | Verbal spatial cue ("Top row.") |
+| `initiation` | Cue to start moving ("Let's begin.") |
+| `continuation` | Cue to keep moving ("Keep going.") |
+| `gesture` | A physical or pointing cue |
+| `direction` | A spatial cue ("Top row.") |
 | `none` | Not really a prompt (acknowledgement, narration, off-task) |
 
 **If `method = rpm`** — one of:
 
 | Type | Meaning |
 |---|---|
-| `choice` | Offers discrete explicit options |
-| `clarification` | Asks the student to confirm/correct/expand prior output |
-| `guided` | Scaffolds toward a target via letter cues / hints |
-| `open_ended` | Invites a free response, no implied target |
-| `reinforcement` | Encourages/affirms without eliciting new info |
+| `choice` | Offers clear options to pick from |
+| `clarification` | Asks the student to confirm/fix/expand something they said |
+| `guided` | Nudges toward a target answer with hints or letter cues |
+| `open_ended` | Invites a free answer, no target in mind |
+| `reinforcement` | Encourages or affirms without asking for new info |
 
-The system prompt includes explicit **tie-breaking rules** (e.g. "RPM + letter
-cues → `guided` even if phrased as a question"; "S2C + spatial words →
-`direction`").
+The instruction prompt also has **tie-breaker rules** for the tricky cases (for
+example: "RPM + letter cues → `guided`, even if it's phrased as a question";
+"S2C + spatial words → `direction`").
 
-### Dimension 3 — Diwakar's Lab types (multi-label)
+### Question 3 — Diwakar's Lab types (pick one or more)
 
-A prompt may carry **one or more** of these 12 labels:
+A prompt can carry **one or more** of these 12 labels:
 
 `encouragement`, `dictation`, `instruction`, `stm`, `question`, `hands`,
 `directional`, `positive_reinforcement`, `gaze_cue`, `physical`, `regulation`,
 `focus`.
 
-The model must return at least one Diwakar label per prompt; combinations are
-common (e.g. a directional question → `['question', 'directional']`).
+The model must return at least one per prompt; combinations are common (e.g. a
+directional question → `['question', 'directional']`).
 
-### Output contract
+### What the model returns
 
-The model returns **only** a JSON array; each object has:
+The model returns **only** a JSON list; each item looks like:
 
 ```json
 {
@@ -201,175 +203,193 @@ The model returns **only** a JSON array; each object has:
 
 ---
 
-## 5. Architecture & Code Map
+## 5. Code Map
 
 ```
 report-comparison/
-├── app.py                          # Streamlit entry point + report renderer
+├── app.py                          # Streamlit app + report builder
 ├── requirements.txt
 ├── Makefile                        # install / run / test / lint
 ├── README.md
-├── PROJECT_SPEC.md                 # ← this document
+├── PROJECT_SPEC.md                 # ← this document (technical)
+├── PROJECT_OVERVIEW.md             # plain-language overview
+├── COOP_FINAL_REPORT.md            # co-op final report
+├── FINAL_REPORT.md                 # handover/completion report
 ├── .env / .env.example             # OPENAI_API_KEY, SUPABASE_URL, SUPABASE_KEY
 │
 ├── pipelines/
 │   └── steps/
-│       ├── ingest_transcript.py    # SRT → plain text
-│       ├── classifier.py           # OpenAI call + robust JSON parsing
-│       ├── database.py             # Supabase persistence + retry
-│       └── metrics.py              # counts, df shaping, trend computation
+│       ├── ingest_transcript.py    # SRT file → plain text
+│       ├── classifier.py           # OpenAI call + safe JSON parsing
+│       ├── database.py             # Supabase save/load + retries
+│       └── metrics.py              # counts, table shaping, trend data
 │
 ├── templates/
-│   └── report_template.html        # Full HTML/CSS/JS report (token-replaced)
+│   └── report_template.html        # The full report (HTML/CSS/JS, filled in by app.py)
 │
 ├── tests/
-│   └── test_pipeline.py            # pytest: ingest + metrics
+│   └── test_pipeline.py            # pytest: transcript reading + counting
 │
-├── data/                           # Training/example data (classic ML)
+├── data/                           # Example data (old ML phase)
 │   ├── prompts.csv
 │   └── prompt_examples_120 (1).csv
 │
-├── ml/                             # Phase-1 ML artifacts (.pkl)
+├── ml/                             # Phase-1 model files (.pkl)
 │   └── archive/                    # Phase-1 training scripts
-│       ├── prompt_train.py
-│       └── train.py
 │
 ├── Reports/                        # Sample inputs/outputs
 │   ├── transcript.srt
 │   ├── transcript2.srt.srt
 │   └── VolcanoLessonReport.docx
-└── outputs/                        # (empty; git-ignored output dir)
+└── outputs/                        # (empty; git-ignored)
 ```
 
-### 5.1 Module responsibilities
+### 5.1 What each file does
 
-**[pipelines/steps/ingest_transcript.py](pipelines/steps/ingest_transcript.py)**
-- `read_transcript(file_uploaded) -> str` — decodes the uploaded SRT (UTF-8,
-  replacing bad bytes) and strips sequence numbers + timestamp lines via regex,
-  leaving only spoken text.
+**[ingest_transcript.py](pipelines/steps/ingest_transcript.py)**
+- `read_transcript(file_uploaded) -> str` — reads the uploaded SRT file and
+  removes the line numbers and timestamps, leaving just the spoken words.
 
-**[pipelines/steps/classifier.py](pipelines/steps/classifier.py)**
-- `classify_transcript(transcript_text) -> list` — single
+**[classifier.py](pipelines/steps/classifier.py)**
+- `classify_transcript(transcript_text) -> list` — makes one
   `chat.completions.create` call with `model="gpt-4.1-mini"`, `temperature=0`,
-  `seed=42` (for determinism/reproducibility). The system prompt encodes the
-  full three-dimension schema (§4).
-- `_extract_json(raw)` — defensive parsing: strips ```` ```json ```` fences,
-  extracts the `[...]` array even if the model adds prose, then `json.loads`.
+  and `seed=42` (these last two make it give the same answer each time). The
+  instruction prompt holds the full three-question setup from §4.
+- `_get_client()` / `_get_secret(name)` — build the OpenAI client only when
+  first needed, reading the API key from the environment **or** from Streamlit's
+  secrets (so it works both locally and when hosted). See §8.1.
+- `_extract_json(raw)` — safely reads the model's reply: strips
+  ```` ```json ```` fences, pulls out the `[...]` list even if the model adds
+  extra text, then parses it.
 
-**[pipelines/steps/database.py](pipelines/steps/database.py)**
-- Lazy Supabase client (`_get_client`) that raises a clear error if
-  `SUPABASE_URL` / `SUPABASE_KEY` are missing.
-- `_retry(fn, retries=3, delay=1.0)` — exponential backoff wrapper around every
-  network call.
-- `save_session(...)` — inserts `{file_name, classified_prompts, session_date}`
+**[database.py](pipelines/steps/database.py)**
+- `_get_client()` / `_get_secret(name)` — build the Supabase client only when
+  first needed, reading `SUPABASE_URL` / `SUPABASE_KEY` from the environment or
+  Streamlit's secrets; gives a clear error if they're missing.
+- `_retry(fn, retries=3, delay=1.0)` — re-runs a network call up to 3 times,
+  waiting a bit longer after each failure, so a brief network hiccup doesn't
+  break things.
+- `save_session(...)` — saves `{file_name, classified_prompts, session_date}`
   plus optional `student_id`, `practitioner`, `topic`.
-- `get_session_by_file(student_id, file_name)` — cache lookup (skip GPT if
-  already analyzed).
+- `get_session_by_file(student_id, file_name)` — looks up a saved session so the
+  app can skip a fresh OpenAI call.
 - `get_prior_session`, `get_student_sessions(limit)` (returned oldest-first),
   `load_sessions`.
 
-**[pipelines/steps/metrics.py](pipelines/steps/metrics.py)**
-- `count_prompt_types(results)` — `type` value counts → dict.
-- `count_methods(results)` — `method` value counts → dict.
+**[metrics.py](pipelines/steps/metrics.py)**
+- `count_prompt_types(results)` — counts how many of each `type`.
+- `count_methods(results)` — counts how many of each `method`.
 - `get_max_counts(counts)`, `results_to_df(results)`.
-- `compute_trend_data(sessions)` — builds per-session `{label, topic, total,
-  counts, pcts}` over the fixed `ALL_TYPES` order, for the cross-session
-  stacked-bar trend chart.
+- `compute_trend_data(sessions, current_file=None, current_date=None)` — for
+  each session, builds `{label, topic, total, counts, pcts}` over a fixed type
+  order, which feeds the cross-session line chart. When `current_file` (and
+  optionally `current_date`) is given, it also returns `currentIndex` — the
+  position of the session being viewed — so the chart can pin it as the
+  always-shown "current" line.
 
-**[app.py](app.py)** — Streamlit page + `render_report(...)`. Holds the
-color/label maps for all three dimensions, builds all server-side HTML
-fragments, and token-replaces them into the template.
+**[app.py](app.py)** — the Streamlit page plus `render_report(...)`. It holds
+the color/label maps for all three questions, builds the HTML pieces, and fills
+them into the template.
 
-**[templates/report_template.html](templates/report_template.html)** — the
-entire report (CSS + markup + vanilla-JS Canvas charts). Receives data through
-`{placeholder}` tokens that `app.py` substitutes, including a single
-`{chart_data}` / `{trend_data}` JSON blob consumed by the inline scripts.
+**[report_template.html](templates/report_template.html)** — the whole report
+(CSS + HTML + plain-JS Canvas charts). `app.py` fills in `{placeholder}` slots,
+including one `{chart_data}` / `{trend_data}` JSON blob the scripts read.
 
 ---
 
-## 6. End-to-End Workflow
+## 6. Start-to-finish flow
 
 ```
 ┌─────────────┐
-│  User opens │  streamlit run app.py  →  http://localhost:8501
-│  the app    │
+│  User opens │  locally: python -m streamlit run app.py → http://localhost:8501
+│  the app    │  hosted:  the Streamlit Community Cloud URL (see §8.4)
 └──────┬──────┘
-       │ enters Student name / Practitioner / Topic (optional)
+       │ enters Student / Practitioner / Topic (optional)
        │ uploads transcript.srt, clicks "Analyze"
        ▼
 ┌──────────────────────────────────────────────────────────────┐
-│ app.py  (button handler)                                       │
+│ app.py  (Analyze button)                                       │
 │                                                                │
-│  1. If student_id given → get_session_by_file(student, file)   │
-│        ├─ hit  → reuse cached classified_prompts (skip GPT)    │
-│        └─ miss → continue                                      │
+│  1. If a student name is given → get_session_by_file(...)      │
+│        ├─ found    → reuse saved labels (skip OpenAI)          │
+│        └─ not found → keep going                              │
 │                                                                │
 │  2. read_transcript(file)         → plain text                 │
-│  3. classify_transcript(text)     → JSON list (OpenAI GPT)     │
+│  3. classify_transcript(text)     → JSON list (OpenAI)         │
 │  4. save_session(...)             → Supabase insert (+retry)   │
-│  5. If ≥2 prior sessions for student:                          │
-│        compute_trend_data(prior)  → trend JSON                 │
+│  5. If 2+ past sessions exist:                                 │
+│        compute_trend_data(...)    → trend JSON                 │
 │  6. render_report(results, file_name, trend_json)              │
 └──────┬─────────────────────────────────────────────────────────┘
        ▼
 ┌──────────────────────────────────────────────────────────────┐
 │ render_report                                                  │
-│   • results_to_df / count_prompt_types / count_methods         │
-│   • pad zero counts for every known type                       │
-│   • build server-side HTML fragments:                          │
-│       - method tables (S2C / RPM), Diwakar table               │
+│   • count prompt types and methods                             │
+│   • build the HTML pieces:                                     │
+│       - S2C / RPM prompt tables, Diwakar table                 │
 │       - S2C & RPM legends                                      │
-│       - "Counts by method" cards (all known types, incl. 0s)   │
-│   • assemble {chart_data} JSON (counts, methods, colorMap,     │
-│     typeLabels, sequence)                                      │
-│   • token-replace into report_template.html                   │
-│   • components.html(...) embeds it in the page                 │
+│       - "Counts by method" cards                               │
+│   • build the {chart_data} JSON                                │
+│   • fill it all into report_template.html                      │
+│   • components.html(...) shows it on the page                  │
 └──────┬─────────────────────────────────────────────────────────┘
        ▼
 ┌──────────────────────────────────────────────────────────────┐
-│ Browser renders the report; inline JS draws charts on Canvas   │
+│ Browser shows the report; JS draws the charts on Canvas        │
 └──────────────────────────────────────────────────────────────┘
 ```
 
-A separate **Previous Sessions** browser lets the user enter a student name,
-load up to 20 saved sessions, pick one, and re-render its report (with trends)
-without re-calling GPT.
+A separate **Previous Sessions** area lets the user type a student name, load up
+to 20 saved sessions, pick one, and re-open its report (with trends) without
+calling OpenAI again.
 
 ---
 
-## 7. The Report (rendered output)
+## 7. The report (what's on the page)
 
-[templates/report_template.html](templates/report_template.html) produces, top
-to bottom:
+[report_template.html](templates/report_template.html) builds, top to bottom:
 
-1. **Header** — file name + report date.
-2. **Stat cards** — Total prompts · Types used · S2C prompts · RPM prompts
-   (animated count-up via `requestAnimationFrame`).
-3. **Two-column panel row:**
-   - *Prompt types* — a donut chart (Canvas) + legend + horizontal
-     distribution bars (animated width).
-   - *Method breakdown* — S2C vs RPM method cards, a percentage split bar, and
-     S2C/RPM legends with descriptions.
-4. **Counts by method** *(full-width section)* — three cards (S2C, RPM,
-   Diwakar's Lab) listing **every known type with its count, including 0s**, in
-   each vocabulary's defined order. *(Added in the most recent work; see §9.)*
-5. **Session timeline** — one colored block per prompt in chronological order;
-   hovering shows index, method, and text. Blocks dim when a method filter is
-   active.
-6. **Prompt type trends — prior sessions** — a stacked-bar Canvas chart across
-   the student's recent sessions (hidden when fewer than 2 exist).
-7. **Classified prompts** — tabbed tables (S2C / RPM / Diwakar's); switching
-   tabs also dims non-matching timeline blocks.
+1. **Header** — file name + date.
+2. **Summary cards** — Total prompts · Types used · S2C prompts · RPM prompts
+   (the numbers count up when the page loads).
+3. **Two-column row:**
+   - *Prompt types* — a donut chart + legend + horizontal bars.
+   - *Method breakdown* — S2C vs RPM cards, a percentage split bar, and S2C/RPM
+     legends with short descriptions.
+4. **Counts by method** *(full-width)* — three cards (S2C, RPM, Diwakar's Lab).
+   Each card lists the method's known types in order, **including ones with a
+   count of 0**, and **also lists any other type that actually showed up** in
+   the data (so prompts the model tagged with an off-list type are still shown,
+   not hidden).
+5. **Session timeline** — one colored block per prompt, in order; hovering shows
+   its number, method, and text. Blocks dim when a method tab is active.
+6. **Prompt type trends — prior sessions** — a **line chart** comparing
+   sessions (hidden until there are 2+). The **prompt types run along the
+   x-axis**, the y-axis is the **percentage share**, and **each line is one
+   session** (so at each prompt type you compare the sessions' dots). Each dot
+   has a value label, plus gridlines and % labels. **Hovering** a line or point
+   shows a tooltip with the session, prompt type, its share, and the exact
+   count.
+   - **Session selector:** the session this report is for is the **pinned
+     "current" line** (always shown — its chip reads "Session N (current)" and
+     can't be toggled off). **Chips** let you add/remove any other session to
+     compare against it — pick any combination, or **All**. The chart opens
+     showing just the current session. (Driven by the `currentIndex` from
+     `compute_trend_data`; up to 12 recent sessions are available to choose.)
+7. **Classified prompts** — tabbed tables (S2C / RPM / Diwakar's); switching tabs
+   also dims the non-matching timeline blocks.
 
-All charts are drawn with the raw Canvas 2D API and vanilla JS — no Chart.js or
-D3. Color and label maps are defined once in `app.py` and passed to the
-template as JSON, so the three dimensions stay visually consistent everywhere.
+All charts are drawn with the plain Canvas API and plain JS — no Chart.js or D3.
+The colors and labels are defined once in `app.py` and passed to the template, so
+everything stays consistent across the charts and tables.
 
 ---
 
-## 8. Configuration & Running
+## 8. Setup & Running
 
-### 8.1 Environment variables (`.env`)
+### 8.1 Keys / config
+
+The app needs three values:
 
 ```bash
 OPENAI_API_KEY=sk-...
@@ -377,10 +397,16 @@ SUPABASE_URL=https://<project-id>.supabase.co
 SUPABASE_KEY=<anon-or-service-role-key>
 ```
 
-Loaded by `python-dotenv` in `classifier.py` and `database.py`. Template lives
-in [.env.example](.env.example); `.env` is git-ignored.
+How they're read (handled by `_get_secret` in `classifier.py` and
+`database.py`):
 
-### 8.2 Supabase schema
+- **Locally** — from a `.env` file, loaded by `python-dotenv`. The template is
+  [.env.example](.env.example); the real `.env` is git-ignored.
+- **When hosted on Streamlit Cloud** — from the app's **Secrets** (set in the
+  dashboard as TOML). The code checks the environment first, then falls back to
+  `st.secrets`, so the same code works in both places.
+
+### 8.2 Supabase table
 
 The `sessions` table needs at least:
 
@@ -388,7 +414,7 @@ The `sessions` table needs at least:
 create table sessions (
   id                 uuid primary key default gen_random_uuid(),
   file_name          text,
-  classified_prompts jsonb,        -- the model's JSON array
+  classified_prompts jsonb,        -- the model's JSON list
   student_id         text,
   practitioner       text,
   topic              text,
@@ -400,94 +426,122 @@ create table sessions (
 ### 8.3 Commands ([Makefile](Makefile))
 
 ```bash
-make install          # pip install -r requirements.txt into .venv
+make install          # install requirements into .venv
 make run              # streamlit run app.py   (→ http://localhost:8501)
 make test             # pytest tests/ -v
-make lint             # flake8 (max-line-length=100)
+make lint             # flake8 (max line length 100)
 ```
 
-Manual run:
+Run by hand:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env       # fill in keys
-streamlit run app.py
+cp .env.example .env       # fill in the keys
+python -m streamlit run app.py
 ```
 
-### 8.4 Usage
+> Tip: use `python -m streamlit ...` so Streamlit runs under the same Python
+> that has the packages installed (avoids "module not found" mix-ups between
+> different Python installs).
 
-1. (Optional) enter Student name / Practitioner / Topic — student name enables
-   caching, history, and the cross-session trend chart.
+### 8.4 Deployment (Streamlit Community Cloud)
+
+- The app is hosted on **Streamlit Community Cloud**, deployed from the GitHub
+  repo `suripeddis/report-comparision` (branch `main`, main file `app.py`).
+- The three keys are set in the app's **Settings → Secrets** (TOML), not in the
+  repo.
+- A new push to `main` redeploys the app.
+- The deployed app is public, so anyone with the link can run analyses (which
+  use the OpenAI key) — access can be limited in the app's sharing settings.
+
+### 8.5 Using it
+
+1. (Optional) enter Student / Practitioner / Topic — the student name turns on
+   saving, history, and the trend chart.
 2. Upload a `.srt` transcript; click **Analyze**.
-3. Review the report.
-4. Later, use **Previous Sessions** to reload and compare past sessions.
+3. Read the report.
+4. Later, use **Previous Sessions** to reopen and compare past sessions.
 
 ---
 
-## 9. Recent Work (this iteration)
+## 9. Recent changes
 
-A **"Counts by Method"** section was added to the report (driven from
-[app.py](app.py) and rendered in
-[templates/report_template.html](templates/report_template.html)):
-
-- Computes, per method, how many prompts fall in each type:
-  - **S2C** / **RPM** — counts of each type filtered by `method`.
-  - **Diwakar's Lab** — tally across each prompt's `diwakar_labels` list.
-- Renders three color-coded cards.
-- **Shows every known type, including those with a count of `0`**, in each
-  vocabulary's defined order (kept stable rather than sorted by count).
-- Promoted from a cramped sub-block inside the "Prompt types" panel to its own
-  **full-width section** beneath the donut/bar row and above the Session
-  timeline, styled to match the other full-width panels.
-
----
-
-## 10. Testing & Quality
-
-[tests/test_pipeline.py](tests/test_pipeline.py) covers the deterministic,
-non-network parts:
-
-- **Ingest** — SRT header/timestamp stripping, speech retention, empty file.
-- **Metrics** — `count_prompt_types` returns a dict with correct values,
-  `get_max_counts` (incl. empty), `results_to_df` shape (incl. empty).
-
-The OpenAI call and Supabase I/O are intentionally **not** unit-tested (they
-require live credentials); robustness there is handled by `_extract_json` and
-`_retry` respectively.
+- **Counts by method (S2C / RPM / Diwakar's Lab cards).** Each card shows the
+  method's known types in order, including 0s, **and now also shows any other
+  type that actually appeared** in the data (so nothing is hidden). Counts come
+  from `_method_type_items()` in [app.py](app.py). This section is its own
+  full-width block beneath the donut/bar row.
+- **Trend chart rebuilt as a session-comparison line chart.** In
+  [report_template.html](templates/report_template.html), the cross-session
+  chart went from stacked bars → a line chart, then was reoriented so **prompt
+  types run along the x-axis and each line is one session** (the clearest way to
+  compare two sessions side by side). It has value labels at each dot, gridlines,
+  and **hover tooltips**. The whole chart is now drawn by a single `render(indices)`
+  function so it can be redrawn for any chosen set of sessions.
+- **Session selector with a pinned "current" session.** The report's own session
+  is always shown (pinned, non-removable); chips let you add/remove any other
+  session to compare against it, or show **All**. Backed by `currentIndex` from
+  `compute_trend_data` (which now takes `current_file`/`current_date`), and the
+  recent-session limit was raised from 6 to 12.
+- **Keys now also read from Streamlit secrets.** `classifier.py` and
+  `database.py` build their clients lazily and read keys from the environment or
+  `st.secrets`, so the app works both locally and when hosted.
 
 ---
 
-## 11. Design Decisions & Rationale
+## 10. Testing
 
-| Decision | Why |
+[tests/test_pipeline.py](tests/test_pipeline.py) covers the parts with
+predictable output:
+
+- **Transcript reading** — removing line numbers/timestamps, keeping the speech,
+  handling an empty file.
+- **Counting** — `count_prompt_types` returns the right counts, `get_max_counts`
+  (including empty input), `results_to_df` shape (including empty input).
+
+The OpenAI call and Supabase reads/writes are **not** unit-tested because they
+need live keys; instead they're made sturdy by `_extract_json` (safe parsing)
+and `_retry` (re-tries on failure).
+
+---
+
+## 11. Why things were done this way
+
+| Choice | Why |
 |---|---|
-| LLM over trained classifier | Needs full-transcript context + 3 simultaneous label dimensions; a flat bag-of-words model can't do either. |
-| `temperature=0`, `seed=42` | Reproducible classifications across runs. |
-| `_extract_json` defensive parsing | LLMs occasionally wrap JSON in prose/markdown; this guarantees a parseable array. |
-| Server-side HTML + Canvas (no chart lib) | Zero extra JS dependencies; full control over the report's look; renders inside Streamlit's `components.html`. |
-| Cache by `student_id + file_name` | Avoids paying for a GPT call when re-viewing an already-analyzed session. |
-| `_retry` with exponential backoff | Supabase/network calls are flaky; retries improve reliability without surfacing transient errors. |
-| Color/label maps centralized in `app.py` | One source of truth keeps the donut, bars, timeline, tables, and trend chart visually consistent. |
-| Method-first → type vocabulary | Mirrors the clinical reasoning order and prevents cross-method type confusion. |
+| AI model instead of a trained classifier | Needs full-transcript context + 3 labels at once; the simple model can't do either |
+| `temperature=0`, `seed=42` | Same input → same labels every run |
+| `_extract_json` safe parsing | Models sometimes wrap JSON in extra text; this still gets a clean list |
+| Build clients lazily + read `st.secrets` | Works locally and when hosted; fails with a clear message if keys are missing |
+| Hand-built HTML + Canvas (no chart library) | No extra dependencies; full control; fits inside Streamlit's `components.html` |
+| Cache by `student_id + file_name` | No paying for a repeat OpenAI call when re-opening a session |
+| `_retry` with growing wait | Network calls sometimes blip; retries keep it reliable |
+| Colors/labels defined once in `app.py` | One source of truth keeps every chart and table consistent |
+| Pick method first, then type | Matches how a clinician reasons and avoids mixing the two type lists |
 
 ---
 
-## 12. Known Limitations & Future Work
+## 12. Known limits & what's next
 
-- **Classification quality depends on transcript quality** — speaker labels are
-  not explicit in the SRT, so the model infers which utterances are the
-  facilitator's; mislabeled speakers degrade results.
-- **No automated eval harness** for the LLM output — there's no held-out
-  labeled set scoring the current model (the archived ML scripts did produce
-  `model_mistakes.csv`, but that's Phase 1).
-- **Single-call classification** — very long transcripts could exceed context
-  or hit token limits; no chunking is implemented.
-- **Cost** — every uncached Analyze is one GPT call over the full transcript.
-- **Supabase coupling** — analysis can run without the DB, but saving/history
-  silently degrade (warnings only) when credentials are absent.
-- Potential next steps: speaker diarization on ingest, a labeled eval set +
-  accuracy dashboard, transcript chunking, export to the `.docx` report format
-  seen in [Reports/](Reports/), and inter-rater comparison against human labels.
+- **Results depend on transcript quality** — SRT files don't say who is talking,
+  so the model has to guess which lines are the facilitator's; unclear
+  transcripts lower accuracy.
+- **No accuracy scorecard yet** — there's no set of human-labeled prompts to
+  measure how often the model agrees with an expert. (The old ML phase logged its
+  mistakes, but that was Phase 1.) This is the most useful next step.
+- **One call per transcript** — very long sessions could hit size limits; the
+  transcript isn't split into pieces.
+- **Cost** — each fresh Analyze is one OpenAI call over the whole transcript
+  (re-opening a saved session is free).
+- **Database is optional but limited without it** — analysis still runs if
+  Supabase is unavailable, but saving and history just show a warning.
+- **Known data quirk** — the model sometimes tags a prompt with `method: s2c`
+  but a `type` from the RPM/Diwakar list (e.g. "guided"). The report now shows
+  these honestly (§9), but tightening the classifier rules so S2C prompts get
+  S2C types is a good follow-up.
+- **Other next steps** — detect speakers automatically, add an accuracy
+  dashboard, split long transcripts, add a downloadable Word/PDF report, and
+  compare the model's labels against human reviewers.
 ```
