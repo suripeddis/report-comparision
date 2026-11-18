@@ -376,6 +376,22 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
 .ml-label { font-weight: 600; color: #111827; }
 .ml-desc  { color: #6B7280; }
 .ml-desc::before { content: '— '; color: #D1D5DB; margin: 0 4px; }
+/* ── Save-as-PDF button + print layout ── */
+.rpt-actions { display: flex; align-items: flex-end; gap: 14px; }
+.rpt-print-btn {
+    font: inherit; font-size: 13px; font-weight: 600;
+    color: #111827; background: #fff;
+    border: 1px solid #D1D5DB; border-radius: 8px;
+    padding: 7px 14px; cursor: pointer;
+}
+.rpt-print-btn:hover { background: #F9FAFB; border-color: #9CA3AF; }
+@media print {
+    @page { margin: 12mm; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { padding: 0; }
+    .no-print { display: none !important; }
+    .stat-card, table tr, canvas, .legend, .ml-item { break-inside: avoid; }
+}
 </style>
 
 <!-- ── Report header ── -->
@@ -384,7 +400,13 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
         <div class="rpt-eyebrow">AAC Session Report</div>
         <div class="rpt-filename">{file_name}</div>
     </div>
-    <div class="rpt-date">{report_date}</div>
+    <div class="rpt-actions">
+        <button type="button" class="rpt-print-btn no-print" onclick="window.print()"
+                title="Opens the print dialog — choose “Save as PDF” as the destination">
+            Save as PDF
+        </button>
+        <div class="rpt-date">{report_date}</div>
+    </div>
 </div>
 
 <!-- ── Stat cards ── -->

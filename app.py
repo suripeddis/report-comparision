@@ -1,3 +1,4 @@
+import os
 import json
 import streamlit as st
 import streamlit.components.v1 as components
@@ -277,6 +278,27 @@ def render_report(results: list, file_name: str, trend_data_json: str = '{"sessi
     )
 
     components.html(html, height=1060 + len(df) * 58, scrolling=True)
+
+    # Offer the finished report as a standalone HTML file the user can keep,
+    # reopen offline, or print to PDF later.
+    stem = os.path.splitext(file_name or "session")[0] or "session"
+    standalone = (
+        "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n"
+        "<meta charset=\"utf-8\">\n"
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+        f"<title>AAC Session Report — {he(stem)}</title>\n"
+        "</head>\n<body>\n" + html + "\n</body>\n</html>\n"
+    )
+    st.download_button(
+        label="Download report (HTML)",
+        data=standalone.encode("utf-8"),
+        file_name=f"{stem}_report.html",
+        mime="text/html",
+        on_click="ignore",  # don't rerun the app, so the report stays on screen
+        key=f"download_{file_name}",
+        help="Saves the report to your computer. Open it in any browser; "
+             "use the report's “Save as PDF” button for a PDF.",
+    )
 
 
 # ── Session metadata inputs ──
