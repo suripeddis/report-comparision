@@ -385,12 +385,46 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
     padding: 7px 14px; cursor: pointer;
 }
 .rpt-print-btn:hover { background: #F9FAFB; border-color: #9CA3AF; }
+.print-only { display: none; }
 @media print {
-    @page { margin: 12mm; }
+    @page { size: letter; margin: 14mm 12mm; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    body { padding: 0; }
-    .no-print { display: none !important; }
-    .stat-card, table tr, canvas, .legend, .ml-item { break-inside: avoid; }
+    body { padding: 0; font-size: 13px; }
+    .no-print, .timeline-sub { display: none !important; }
+    .print-only { display: block; }
+
+    /* Paper is much narrower than the screen: stack the side-by-side panels
+       so each gets the full page width instead of being squeezed. */
+    .panel-row { grid-template-columns: 1fr; gap: 18px; margin-bottom: 18px; }
+    .mtc-grid  { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .stat-grid { margin-bottom: 18px; }
+    .mtc-wrap, .timeline-panel, .trend-panel, .table-panel { margin-bottom: 18px; }
+    .donut-row { gap: 40px; padding: 4px 8px 0; }
+    #donutLegend { column-count: 2; column-gap: 40px; }
+    .legend-item { gap: 12px; break-inside: avoid; }
+    .filters { display: none !important; }
+
+    /* Keep each chart, card and row in one piece across page breaks. */
+    .stat-grid, .stat-card, .donut-row, .bar-row, .method-cards, .method-card,
+    .ml-block, .mtc-group, .timeline-panel, .trend-panel,
+    .panel-title, tr { break-inside: avoid; }
+    .panel-title { break-after: avoid; }
+
+    /* Charts drawn at screen width: scale down without stretching. */
+    #trendCanvas { width: 100% !important; height: auto !important; }
+
+    /* Show every prompt table (not just the selected tab), each labelled. */
+    .mt-table-wrap { display: block !important; }
+    .mt-table-wrap + .mt-table-wrap { margin-top: 18px; }
+    .mt-table-wrap::before {
+        content: attr(data-label);
+        display: block; padding: 10px 16px 8px;
+        font-size: 12px; font-weight: 700; color: #374151;
+        text-transform: uppercase; letter-spacing: 0.6px;
+        break-after: avoid;
+    }
+    thead { display: table-header-group; }
+    .t-dot { opacity: 0.82 !important; }
 }
 </style>
 
@@ -554,7 +588,7 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
             <button class="fbtn fdwk"        data-filter="diwakar">Diwakar's</button>
         </div>
     </div>
-    <div class="mt-table-wrap active" data-method="s2c">
+    <div class="mt-table-wrap active" data-method="s2c" data-label="S2C prompts">
         <table class="mt-table">
             <thead>
                 <tr>
@@ -565,7 +599,7 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
             <tbody>{s2c_table_rows}</tbody>
         </table>
     </div>
-    <div class="mt-table-wrap" data-method="rpm">
+    <div class="mt-table-wrap" data-method="rpm" data-label="RPM prompts">
         <table class="mt-table">
             <thead>
                 <tr>
@@ -576,7 +610,7 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
             <tbody>{rpm_table_rows}</tbody>
         </table>
     </div>
-    <div class="mt-table-wrap" data-method="spellers">
+    <div class="mt-table-wrap" data-method="spellers" data-label="Spellers prompts">
         <table class="mt-table">
             <thead>
                 <tr>
@@ -587,7 +621,7 @@ td { padding: 13px 22px; border-bottom: 1px solid #F3F4F6; vertical-align: middl
             <tbody>{spellers_table_rows}</tbody>
         </table>
     </div>
-    <div class="mt-table-wrap" data-method="diwakar">
+    <div class="mt-table-wrap" data-method="diwakar" data-label="Diwakar's Lab prompts">
         <table class="mt-table">
             <thead>
                 <tr>
@@ -605,6 +639,19 @@ const DATA = {chart_data};
 const TREND_DATA = {trend_data};
 
 /* ── Animated counters ── */
+// Jump straight to the final numbers when printing, so a PDF never
+// captures a counter mid-animation.
+function finishCounters() {
+    document.querySelectorAll('[data-target]').forEach(el => {
+        el.textContent = el.dataset.target;
+    });
+}
+window.addEventListener('beforeprint', finishCounters);
+if (window.matchMedia) {
+    const mq = window.matchMedia('print');
+    if (mq.matches) finishCounters();
+    if (mq.addEventListener) mq.addEventListener('change', e => { if (e.matches) finishCounters(); });
+}
 document.querySelectorAll('[data-target]').forEach(el => {
     const end = parseInt(el.dataset.target, 10);
     const t0 = performance.now();
@@ -612,6 +659,7 @@ document.querySelectorAll('[data-target]').forEach(el => {
     (function tick(now) {
         const p = Math.min((now - t0) / dur, 1);
         el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * end);
+        if (window.matchMedia && window.matchMedia('print').matches) { el.textContent = end; return; }
         if (p < 1) requestAnimationFrame(tick);
     })(t0);
 });
@@ -872,6 +920,7 @@ const humanize = s => (s || '').replace(/_/g, ' ').replace(/^./, c => c.toUpperC
 
     if (maxN >= 2) {
         const controls = document.createElement('div');
+        controls.className = 'no-print';
         controls.style.cssText = 'display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:12px 0 2px;font-size:11px;color:#9CA3AF;';
         const lbl = document.createElement('span');
         lbl.textContent = 'Compare with:';
