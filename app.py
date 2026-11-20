@@ -31,6 +31,7 @@ RPM_TYPE_MAP = {
     "clarification": {"fill": "#FAC775", "badge_bg": "#FAEEDA", "badge_text": "#633806", "label": "Clarification"},
     "guided":        {"fill": "#5DCAA5", "badge_bg": "#E1F5EE", "badge_text": "#085041", "label": "Guided"},
     "reinforcement": {"fill": "#F0997B", "badge_bg": "#FAECE7", "badge_text": "#712B13", "label": "Reinforcement"},
+    "none":          {"fill": "#D1D5DB", "badge_bg": "#F3F4F6", "badge_text": "#374151", "label": "None"},
 }
 
 S2C_TYPE_MAP = {
@@ -60,6 +61,30 @@ RPM_TYPE_DESCRIPTIONS = {
     "clarification": "Requests for the speller to explain or expand on prior responses.",
     "reinforcement": "Encouragement and praise that affirms effort or correctness.",
     "choice":        "Offering 2–3 options to focus attention or invite preference.",
+    "none":          "Not a real prompt — acknowledgement, narration, or off-task talk.",
+}
+
+# Definitions for types the classifier sometimes returns outside a method's
+# official list (e.g. a Diwakar's Lab label used as an RPM type). The legend
+# lists any such type that appears, so every type in a report is defined.
+OFF_LIST_TYPE_DESCRIPTIONS = {
+    "question":               "Asks something to prompt thinking, recall, or a response.",
+    "instruction":            "Explicit guidance about what action to take.",
+    "positive_reinforcement": "Praise or rewarding feedback after a correct response.",
+    "encouragement":          "Motivational or supportive language to keep the participant engaged.",
+    "initiation":             "Verbal cue to start a movement or response.",
+    "continuation":           "Verbal cue to continue a movement already in progress.",
+    "direction":              "Verbal spatial cue like “top row.”",
+    "directional":            "Cue that directs attention or movement toward a target.",
+    "gesture":                "Physical cue such as pointing or guiding.",
+    "gestural":               "Hand/finger cue supporting visual orientation toward the board.",
+    "eye":                    "Cue to keep visual attention on the board.",
+    "choice":                 "Offering 2–3 options to focus attention or invite preference.",
+    "clarification":          "Requests for the speller to explain or expand on prior responses.",
+    "guided":                 "Scaffolds toward a specific answer via letter cues or hints.",
+    "open_ended":             "Invites a free response with no target answer implied.",
+    "reinforcement":          "Encouragement or praise that affirms effort without asking for new information.",
+    "none":                   "Not a real prompt — acknowledgement, narration, or off-task talk.",
 }
 
 # Union for visualizations that ignore method (donut, distribution bars, table badges).
@@ -219,11 +244,32 @@ def render_report(results: list, file_name: str, trend_data_json: str = '{"sessi
             )
         return out
 
-    s2c_legend_items = [(v["label"], v["desc"]) for v in S2C_TYPE_MAP.values()]
-    rpm_legend_items = [(v["label"], RPM_TYPE_DESCRIPTIONS.get(k, "")) for k, v in RPM_TYPE_MAP.items()]
+    def _off_list_legend_items(method_key, type_map):
+        """Types that appeared for this method but aren't in its official list."""
+        if "method" not in df.columns or "type" not in df.columns:
+            return []
+        seen = df.loc[df["method"] == method_key, "type"].dropna().unique()
+        items = []
+        for t in seen:
+            if t in type_map:
+                continue
+            label = (COLOR_MAP.get(t, {}).get("label")
+                     or DIWAKAR_MAP.get(t, {}).get("label") or _humanize(t))
+            desc = (OFF_LIST_TYPE_DESCRIPTIONS.get(t)
+                    or DIWAKAR_MAP.get(t, {}).get("desc")
+                    or "Label returned by the classifier outside this method's list.")
+            items.append((label, desc))
+        return items
+
+    s2c_legend_items = ([(v["label"], v["desc"]) for v in S2C_TYPE_MAP.values()]
+                        + _off_list_legend_items("s2c", S2C_TYPE_MAP))
+    rpm_legend_items = ([(v["label"], RPM_TYPE_DESCRIPTIONS.get(k, "")) for k, v in RPM_TYPE_MAP.items()]
+                        + _off_list_legend_items("rpm", RPM_TYPE_MAP))
+    spellers_legend_items = ([(v["label"], v["desc"]) for v in SPELLERS_TYPE_MAP.values()]
+                             + _off_list_legend_items("spellers", SPELLERS_TYPE_MAP))
     s2c_legend = _legend_html(s2c_legend_items)
     rpm_legend = _legend_html(rpm_legend_items)
-    spellers_legend = _legend_html([(v["label"], v["desc"]) for v in SPELLERS_TYPE_MAP.values()])
+    spellers_legend = _legend_html(spellers_legend_items)
 
     diwakar_rows = ""
     for _, row in df.iterrows():

@@ -1,6 +1,6 @@
 import pandas as pd
 
-RPM_TYPES = ["open_ended", "choice", "clarification", "guided", "reinforcement"]
+RPM_TYPES = ["open_ended", "choice", "clarification", "guided", "reinforcement", "none"]
 S2C_TYPES = [
     "initiation",
     "continuation",
